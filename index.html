@@ -8,7 +8,7 @@
 <style>
 :root {
   --bg-primary: #0A0A0C;
-  --bg-card: rgba(255,255,255,0.04);
+  --bg-card: rgba(255,255,255,0.03);
   --border-card: rgba(255,255,255,0.06);
   --bg-elevated: #111113;
   --accent: #C9A96E;
@@ -39,6 +39,21 @@ html, body {
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* Ambient background glow */
+.app::before {
+  content: '';
+  position: fixed;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* === SCREENS === */
@@ -46,6 +61,7 @@ html, body {
   flex: 1;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .screen {
@@ -55,15 +71,15 @@ html, body {
   overflow-x: hidden;
   padding: 20px 20px 100px;
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(12px) scale(0.98);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: none;
   -webkit-overflow-scrolling: touch;
 }
 .screen::-webkit-scrollbar { display: none; }
 .screen.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -73,8 +89,10 @@ html, body {
   justify-content: space-around;
   align-items: center;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  background: var(--bg-elevated);
-  border-top: 1px solid var(--border-card);
+  background: rgba(17,17,19,0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,0.04);
   flex-shrink: 0;
   position: relative;
   z-index: 10;
@@ -90,10 +108,12 @@ html, body {
   border: none;
   background: none;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s;
 }
-.nav-item svg { width: 22px; height: 22px; fill: none; stroke: var(--text-tertiary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s; }
-.nav-item span { font-size: 10px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; }
-.nav-item.active svg { stroke: var(--accent); }
+.nav-item:active { transform: scale(0.9); }
+.nav-item svg { width: 22px; height: 22px; fill: none; stroke: var(--text-tertiary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s, filter 0.3s; }
+.nav-item span { font-size: 10px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s; }
+.nav-item.active svg { stroke: var(--accent); filter: drop-shadow(0 0 6px rgba(201,169,110,0.4)); }
 .nav-item.active span { color: var(--accent); }
 
 /* === SHARED === */
@@ -101,24 +121,60 @@ html, body {
 .date-sub { font-weight: 500; font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 .section-title { font-weight: 500; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; margin-top: 24px; }
 
+/* === GLASS CARDS === */
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
   padding: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.3),
+    0 8px 24px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  border-radius: 20px 20px 0 0;
 }
 
 .stat-value { font-weight: 300; font-size: 22px; letter-spacing: -0.5px; }
 .stat-label { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
-/* === RING === */
+/* === 3D RING === */
 .ring-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 24px 0 20px;
+  margin: 28px 0 24px;
+  position: relative;
 }
-.ring-wrap { position: relative; }
+.ring-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(201,169,110,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ring-wrap {
+  position: relative;
+  filter: drop-shadow(0 0 20px rgba(201,169,110,0.15));
+}
+
 .ring-center {
   position: absolute;
   top: 50%;
@@ -126,38 +182,94 @@ html, body {
   transform: translate(-50%, -50%);
   text-align: center;
 }
-.ring-score { font-weight: 300; font-size: 48px; letter-spacing: -1px; display: block; }
-.ring-label { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; }
+.ring-score {
+  font-weight: 300;
+  font-size: 48px;
+  letter-spacing: -1px;
+  display: block;
+  text-shadow: 0 0 40px rgba(201,169,110,0.2);
+}
+.ring-label {
+  font-weight: 500;
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 10px;
+}
 
-/* === HOME GRID === */
+/* === HOME STAT CARDS === */
 .stat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
   padding: 16px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, background 0.3s;
   -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.3),
+    0 8px 24px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  position: relative;
+  overflow: hidden;
 }
-.stat-card:active { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(201,169,110,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.stat-card:active {
+  transform: scale(0.97);
+  background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+}
 .stat-card .icon { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.stat-card .icon svg { width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.stat-card .icon svg {
+  width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(201,169,110,0.3));
+}
 .stat-card .icon span { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
 
 /* === SLEEP STAGES === */
 .stages-bar {
   display: flex;
-  height: 28px;
-  border-radius: 8px;
+  height: 32px;
+  border-radius: 10px;
   overflow: hidden;
   gap: 2px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
-.stage { transition: flex 0.4s ease; }
+.stage { transition: flex 0.4s ease; position: relative; overflow: hidden; }
+.stage::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
+}
 .stages-legend {
   display: flex;
   flex-wrap: wrap;
@@ -165,19 +277,19 @@ html, body {
   margin-top: 12px;
 }
 .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
 
 /* === STATS ROW === */
-.stats-row {
-  display: flex;
-  gap: 0;
-}
+.stats-row { display: flex; }
 .stats-row .stat-col {
   flex: 1;
   text-align: center;
   padding: 14px 0;
 }
-.stats-row .stat-col + .stat-col { border-left: 1px solid var(--border-card); }
+.stats-row .stat-col + .stat-col { border-left: 1px solid rgba(255,255,255,0.04); }
 .stats-row .stat-col .val { font-weight: 300; font-size: 18px; letter-spacing: -0.5px; }
 .stats-row .stat-col .lbl { font-weight: 500; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
@@ -210,39 +322,82 @@ html, body {
 }
 .bar {
   flex: 1;
-  border-radius: 3px 3px 0 0;
+  border-radius: 4px 4px 0 0;
   min-height: 4px;
   transition: height 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+  border-radius: 4px 4px 0 0;
 }
 
 /* === HEART PULSE === */
+.pulse-wrap {
+  text-align: center;
+  margin: 32px 0 0;
+  position: relative;
+}
+.pulse-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { transform: translate(-50%, -60%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -60%) scale(1.15); opacity: 0.5; }
+}
+
 .pulse-bpm {
   font-weight: 300;
   font-size: 64px;
   letter-spacing: -2px;
-  text-align: center;
-  animation: pulse 1.5s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 40px rgba(201,169,110,0.15);
+  animation: pulse-num 1.5s ease-in-out infinite;
 }
 .pulse-unit { font-weight: 400; font-size: 16px; color: var(--text-secondary); }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes pulse-num {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(0.98); }
 }
+
 .hr-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 12px;
-  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 400;
   color: var(--text-secondary);
-  margin: 12px auto 0;
-  text-align: center;
+  margin: 14px auto 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.hr-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.hr-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(201,169,110,0.5);
+}
 
 /* === PROFILE === */
 .device-card {
@@ -251,26 +406,28 @@ html, body {
   gap: 14px;
 }
 .device-icon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--accent-glow);
+  background: radial-gradient(circle at 35% 35%, rgba(201,169,110,0.25), rgba(201,169,110,0.05));
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 20px rgba(201,169,110,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,169,110,0.1);
 }
-.device-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+.device-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.5; filter: drop-shadow(0 0 4px rgba(201,169,110,0.3)); }
 .device-info { flex: 1; }
 .device-name { font-weight: 400; font-size: 15px; }
 .device-status { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; }
-.device-battery { font-weight: 500; font-size: 13px; color: var(--accent); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; box-shadow: 0 0 8px rgba(74,222,128,0.4); }
+.device-battery { font-weight: 500; font-size: 13px; color: var(--accent); text-shadow: 0 0 10px rgba(201,169,110,0.2); }
 
 .info-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-card);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .info-row:last-child { border-bottom: none; }
 .info-key { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
@@ -280,8 +437,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-card);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .goal-row:last-child { border-bottom: none; }
 .goal-label { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
@@ -289,10 +446,11 @@ html, body {
   font-weight: 400;
   font-size: 14px;
   color: var(--text-primary);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border-card);
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 6px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .wordmark {
@@ -303,6 +461,7 @@ html, body {
   letter-spacing: 4px;
   margin-top: 32px;
   padding-bottom: 20px;
+  text-shadow: 0 0 20px rgba(201,169,110,0.1);
 }
 
 /* 3-col stat row */
@@ -312,9 +471,46 @@ html, body {
   gap: 10px;
 }
 .stat-3col .card { text-align: center; }
+
+/* 3D SVG ring styling */
+.ring-track { fill: none; stroke: rgba(255,255,255,0.04); }
+.ring-track-inner { fill: none; stroke: rgba(255,255,255,0.03); }
+.ring-progress {
+  fill: none;
+  stroke: url(#goldGradient);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(201,169,110,0.4));
+}
+.ring-progress-inner {
+  fill: none;
+  stroke: url(#goldGradientDim);
+  stroke-linecap: round;
+}
+.ring-bg-glow {
+  fill: url(#ringGlow);
+}
 </style>
 </head>
 <body>
+
+<!-- Shared SVG defs -->
+<svg style="position:absolute;width:0;height:0">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8D4A0"/>
+      <stop offset="50%" stop-color="#C9A96E"/>
+      <stop offset="100%" stop-color="#A8893E"/>
+    </linearGradient>
+    <linearGradient id="goldGradientDim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(201,169,110,0.5)"/>
+      <stop offset="100%" stop-color="rgba(168,137,62,0.3)"/>
+    </linearGradient>
+    <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(201,169,110,0.06)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+</svg>
 
 <div class="app">
   <div class="screens">
@@ -326,14 +522,14 @@ html, body {
 
       <div class="ring-container">
         <div class="ring-wrap">
-          <svg width="160" height="160" viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
-              stroke-dasharray="361 440" stroke-linecap="round" transform="rotate(-90 80 80)"
-              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
-            <circle cx="80" cy="80" r="58" fill="none" stroke="var(--border-card)" stroke-width="4"/>
-            <circle cx="80" cy="80" r="58" fill="none" stroke="var(--accent-dim)" stroke-width="4"
-              stroke-dasharray="270 364" stroke-linecap="round" transform="rotate(-90 80 80)"/>
+          <svg width="180" height="180" viewBox="0 0 180 180">
+            <circle class="ring-bg-glow" cx="90" cy="90" r="85"/>
+            <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="6"/>
+            <circle class="ring-progress" cx="90" cy="90" r="76" stroke-width="6"
+              stroke-dasharray="391 478" transform="rotate(-90 90 90)"/>
+            <circle class="ring-track-inner" cx="90" cy="90" r="64" stroke-width="4"/>
+            <circle class="ring-progress-inner" cx="90" cy="90" r="64" stroke-width="4"
+              stroke-dasharray="298 402" transform="rotate(-90 90 90)"/>
           </svg>
           <div class="ring-center">
             <span class="ring-score">82</span>
@@ -383,11 +579,11 @@ html, body {
 
       <div class="ring-container">
         <div class="ring-wrap">
-          <svg width="160" height="160" viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
-              stroke-dasharray="374 440" stroke-linecap="round" transform="rotate(-90 80 80)"
-              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
+          <svg width="180" height="180" viewBox="0 0 180 180">
+            <circle class="ring-bg-glow" cx="90" cy="90" r="85"/>
+            <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="6"/>
+            <circle class="ring-progress" cx="90" cy="90" r="76" stroke-width="6"
+              stroke-dasharray="406 478" transform="rotate(-90 90 90)"/>
           </svg>
           <div class="ring-center">
             <span class="ring-score">85</span>
@@ -399,16 +595,16 @@ html, body {
       <div class="section-title">Sleep Stages</div>
       <div class="card">
         <div class="stages-bar">
-          <div class="stage" style="flex:23;background:rgba(255,255,255,0.2);"></div>
+          <div class="stage" style="flex:23;background:rgba(255,255,255,0.15);"></div>
           <div class="stage" style="flex:108;background:var(--accent);"></div>
           <div class="stage" style="flex:222;background:var(--accent-dim);"></div>
           <div class="stage" style="flex:91;background:#E8C46E;"></div>
         </div>
         <div class="stages-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.2)"></div>Awake 23m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>REM 1h 48m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-dim)"></div>Light 3h 42m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#E8C46E"></div>Deep 1h 31m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.15);box-shadow:0 0 6px rgba(255,255,255,0.1)"></div>Awake 23m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent);box-shadow:0 0 6px rgba(201,169,110,0.4)"></div>REM 1h 48m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-dim);box-shadow:0 0 6px rgba(201,169,110,0.2)"></div>Light 3h 42m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#E8C46E;box-shadow:0 0 6px rgba(232,196,110,0.3)"></div>Deep 1h 31m</div>
         </div>
       </div>
 
@@ -435,11 +631,11 @@ html, body {
 
       <div class="ring-container">
         <div class="ring-wrap">
-          <svg width="160" height="160" viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
-            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
-              stroke-dasharray="370 440" stroke-linecap="round" transform="rotate(-90 80 80)"
-              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
+          <svg width="180" height="180" viewBox="0 0 180 180">
+            <circle class="ring-bg-glow" cx="90" cy="90" r="85"/>
+            <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="6"/>
+            <circle class="ring-progress" cx="90" cy="90" r="76" stroke-width="6"
+              stroke-dasharray="401 478" transform="rotate(-90 90 90)"/>
           </svg>
           <div class="ring-center">
             <span class="ring-score" style="font-size:36px;">420</span>
@@ -476,7 +672,7 @@ html, body {
       <div class="greeting">Heart Rate</div>
       <div class="date-sub">Today</div>
 
-      <div style="text-align:center;margin:32px 0 0;">
+      <div class="pulse-wrap">
         <div class="pulse-bpm">62 <span class="pulse-unit">bpm</span></div>
         <div style="display:flex;justify-content:center;">
           <div class="hr-badge"><div class="hr-badge-dot"></div>Resting: 58 bpm</div>
@@ -573,15 +769,19 @@ function switchTab(index) {
   screens[index].classList.add('active');
   navItems[index].classList.add('active');
   screens[index].scrollTop = 0;
+  if (index === 1 || index === 3) {
+    setTimeout(() => {
+      if (index === 1) drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
+      if (index === 3) drawLineChart('hr-chart', dayHR, 45, 135);
+    }, 50);
+  }
 }
 
-// Date display
 const now = new Date();
 const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
 
-// Draw line chart
 function drawLineChart(canvasId, dataPoints, yMin, yMax) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
@@ -607,7 +807,8 @@ function drawLineChart(canvasId, dataPoints, yMin, yMax) {
 
   // Gradient fill
   const grad = ctx.createLinearGradient(0, pad.top, 0, h);
-  grad.addColorStop(0, 'rgba(201,169,110,0.2)');
+  grad.addColorStop(0, 'rgba(201,169,110,0.25)');
+  grad.addColorStop(0.5, 'rgba(201,169,110,0.08)');
   grad.addColorStop(1, 'rgba(201,169,110,0)');
 
   ctx.beginPath();
@@ -623,7 +824,18 @@ function drawLineChart(canvasId, dataPoints, yMin, yMax) {
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // Line
+  // Glow line
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const cx = (points[i-1].x + points[i].x) / 2;
+    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
+  }
+  ctx.strokeStyle = 'rgba(201,169,110,0.3)';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+
+  // Main line
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
@@ -633,18 +845,23 @@ function drawLineChart(canvasId, dataPoints, yMin, yMax) {
   ctx.strokeStyle = '#C9A96E';
   ctx.lineWidth = 2;
   ctx.stroke();
+
+  // End dot with glow
+  const ep = points[points.length - 1];
+  ctx.beginPath();
+  ctx.arc(ep.x, ep.y, 6, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(201,169,110,0.15)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(ep.x, ep.y, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#C9A96E';
+  ctx.fill();
 }
 
-// Sleep HR data (10pm to 6am, dips during deep sleep ~2-4am)
 const sleepHR = [68, 65, 62, 60, 58, 55, 53, 52, 52, 53, 54, 52, 51, 52, 54, 56, 58, 60, 62, 64, 65];
-
-// 24h HR data (12am to now)
 const dayHR = [58, 56, 54, 52, 53, 55, 62, 68, 72, 78, 85, 92, 88, 76, 72, 80, 95, 124, 110, 88, 75, 68, 65, 62];
-
-// Activity hourly data
 const hourlyActivity = [0,0,0,0,0,0,10,25,40,15,8,5,30,45,20,10,5,60,80,35,15,8,0,0];
 
-// Render activity bars
 const barsContainer = document.getElementById('activity-bars');
 const maxActivity = Math.max(...hourlyActivity);
 hourlyActivity.forEach(v => {
@@ -652,12 +869,11 @@ hourlyActivity.forEach(v => {
   bar.className = 'bar';
   const pct = maxActivity > 0 ? (v / maxActivity) * 100 : 0;
   bar.style.height = Math.max(pct, 5) + '%';
-  bar.style.background = v > 0 ? 'var(--accent)' : 'var(--border-card)';
-  bar.style.opacity = v > 20 ? 1 : v > 0 ? 0.5 : 0.2;
+  bar.style.background = v > 20 ? 'linear-gradient(to top, #A8893E, #C9A96E, #E8D4A0)' : v > 0 ? 'rgba(201,169,110,0.3)' : 'rgba(255,255,255,0.03)';
+  bar.style.boxShadow = v > 20 ? '0 0 8px rgba(201,169,110,0.2)' : 'none';
   barsContainer.appendChild(bar);
 });
 
-// Draw charts after layout
 setTimeout(() => {
   drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
   drawLineChart('hr-chart', dayHR, 45, 135);
