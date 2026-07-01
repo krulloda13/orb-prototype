@@ -1127,30 +1127,25 @@ document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',fun
     });
   },1400);
 
-  // Step 3: Reveal app behind splash, then pan logo to top-left
+  // Step 3: Fly logo off screen left while home fades in
   setTimeout(()=>{
-    // Show app underneath (invisible behind splash bg)
-    app.classList.remove('hidden');
-    app.style.opacity='1';
     // Hide loading bar and glow
     bar.parentElement.style.opacity='0';
     splash.querySelector('.splash-glow').style.opacity='0';
     // Clear splash background so app shows through
     splash.classList.add('bg-clear');
-    // Pan logo from center to top-left position
-    logo.classList.add('pan');
-    // Hide the in-app logo so the splash logo lands on top of it
-    const appLogo=document.querySelector('.top-bar .logo');
-    if(appLogo)appLogo.style.opacity='0';
+    // Show app underneath
+    app.classList.remove('hidden');
+    app.style.opacity='1';
+    // Fly logo off to the left
+    logo.classList.add('fly-left');
   },2400);
 
-  // Step 4: After pan completes, show in-app logo and remove splash
+  // Step 4: After fly completes, remove splash and run animations
   setTimeout(()=>{
-    const appLogo=document.querySelector('.top-bar .logo');
-    if(appLogo)appLogo.style.opacity='1';
     splash.remove();
     runEntranceAnimations();
-  },3300);
+  },3100);
 })();
 </script>
 </body>
