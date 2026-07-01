@@ -230,6 +230,13 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 7px rgba(201,169,110,.3))}50%{filter:drop-shadow(0 0 14px rgba(201,169,110,.5))}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes breathe{0%,100%{box-shadow:0 0 0 1.5px var(--accent),0 0 12px rgba(201,169,110,.15)}50%{box-shadow:0 0 0 1.5px var(--accent),0 0 20px rgba(201,169,110,.3)}}
+@keyframes sparkle{0%{opacity:0;transform:translate(-50%,-50%) scale(0)}30%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0)}}
+@keyframes sparkleRotate{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(180deg)}}
+.sparkle{position:absolute;width:4px;height:4px;pointer-events:none;z-index:3}
+.sparkle::before,.sparkle::after{content:'';position:absolute;background:var(--accent);border-radius:1px}
+.sparkle::before{width:100%;height:1px;top:50%;left:0;transform:translateY(-50%);box-shadow:0 0 4px rgba(201,169,110,.8),0 0 8px rgba(201,169,110,.4)}
+.sparkle::after{width:1px;height:100%;left:50%;top:0;transform:translateX(-50%);box-shadow:0 0 4px rgba(201,169,110,.8),0 0 8px rgba(201,169,110,.4)}
+.sparkle-dot{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(232,212,160,.9);pointer-events:none;z-index:3;box-shadow:0 0 3px rgba(201,169,110,.6),0 0 6px rgba(201,169,110,.3)}
 
 .score-pill.active .pill-wrap{animation:breathe 3s ease-in-out infinite}
 .hero-arc{animation:fadeIn .6s ease-out both}
