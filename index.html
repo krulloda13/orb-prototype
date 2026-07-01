@@ -1062,6 +1062,17 @@ function switchTab(index) {
   }
 }
 
+// Hero score pill switcher
+function setHeroScore(pill, score, label, quality, pct) {
+  document.querySelectorAll('.score-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  document.getElementById('hero-score').textContent = score;
+  document.getElementById('hero-label').textContent = label;
+  document.getElementById('hero-quality').textContent = quality;
+  const arcLen = 283;
+  document.getElementById('hero-arc-progress').setAttribute('stroke-dasharray', `${Math.round(arcLen * pct)} ${arcLen}`);
+}
+
 const now = new Date();
 const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
