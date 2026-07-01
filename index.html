@@ -1127,37 +1127,30 @@ document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',fun
     });
   },1400);
 
-  // Step 3: After letters drop, pan logo to the left (into top-bar position)
+  // Step 3: Reveal app behind splash, then pan logo to top-left
   setTimeout(()=>{
-    // Hide the loading bar
+    // Show app underneath (invisible behind splash bg)
+    app.classList.remove('hidden');
+    app.style.opacity='1';
+    // Hide loading bar and glow
     bar.parentElement.style.opacity='0';
-    bar.parentElement.style.transition='opacity .3s';
-    // Shrink and move logo to top-left
-    logo.style.fontSize='18px';
-    logo.style.letterSpacing='3px';
-    logo.style.position='fixed';
-    logo.style.left='20px';
-    logo.style.top='16px';
-    logo.style.transform='none';
-    splash.style.background='transparent';
-    // Hide glow
     splash.querySelector('.splash-glow').style.opacity='0';
-    splash.querySelector('.splash-glow').style.transition='opacity .3s';
+    // Clear splash background so app shows through
+    splash.classList.add('bg-clear');
+    // Pan logo from center to top-left position
+    logo.classList.add('pan');
+    // Hide the in-app logo so the splash logo lands on top of it
+    const appLogo=document.querySelector('.top-bar .logo');
+    if(appLogo)appLogo.style.opacity='0';
   },2400);
 
-  // Step 4: Reveal the app and fade out splash
+  // Step 4: After pan completes, show in-app logo and remove splash
   setTimeout(()=>{
-    app.classList.remove('hidden');
-    app.style.opacity='0';
-    app.style.transition='opacity .4s ease';
-    requestAnimationFrame(()=>{app.style.opacity='1'});
-    splash.classList.add('fade-out');
-    // Run entrance animations
-    setTimeout(runEntranceAnimations,200);
-  },2900);
-
-  // Step 5: Remove splash from DOM
-  setTimeout(()=>splash.remove(),3500);
+    const appLogo=document.querySelector('.top-bar .logo');
+    if(appLogo)appLogo.style.opacity='1';
+    splash.remove();
+    runEntranceAnimations();
+  },3300);
 })();
 </script>
 </body>
