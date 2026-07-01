@@ -7,1179 +7,632 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-primary: #0A0A0C;
-  --bg-card: rgba(255,255,255,0.03);
-  --border-card: rgba(255,255,255,0.06);
-  --bg-elevated: #111113;
+  --bg: #0A0A0C;
+  --card: rgba(255,255,255,0.03);
+  --card-border: rgba(255,255,255,0.05);
+  --elevated: #111113;
   --accent: #C9A96E;
-  --accent-dim: rgba(201,169,110,0.35);
-  --accent-glow: rgba(201,169,110,0.15);
-  --text-primary: #FFFFFF;
-  --text-secondary: rgba(255,255,255,0.4);
-  --text-tertiary: rgba(255,255,255,0.2);
+  --accent-dim: rgba(201,169,110,0.3);
+  --accent-glow: rgba(201,169,110,0.12);
+  --green: #4ADE80;
+  --t1: #FFFFFF;
+  --t2: rgba(255,255,255,0.45);
+  --t3: rgba(255,255,255,0.2);
 }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* APP SHELL */
+.app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg)}
 
-html, body {
-  height: 100%;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow: hidden;
-}
+.screens{flex:1;position:relative;overflow:hidden;z-index:1}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:16px 20px 100px;opacity:0;transform:translateY(10px);transition:opacity 0.35s,transform 0.35s cubic-bezier(.23,1,.32,1);pointer-events:none;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;transform:translateY(0);pointer-events:auto}
 
-.app {
-  max-width: 390px;
-  margin: 0 auto;
-  height: 100vh;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  background: var(--bg-primary);
-}
+/* NAV */
+.nav{display:flex;justify-content:space-around;align-items:center;padding:6px 0 calc(6px + env(safe-area-inset-bottom));background:rgba(17,17,19,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.04);flex-shrink:0;z-index:10}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 14px;border:none;background:none;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.nav-item:active{transform:scale(.88)}
+.nav-item svg{width:20px;height:20px;fill:none;stroke:var(--t3);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s,filter .25s}
+.nav-item span{font-size:9px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;transition:color .25s}
+.nav-item.active svg{stroke:var(--accent);filter:drop-shadow(0 0 5px rgba(201,169,110,.35))}
+.nav-item.active span{color:var(--accent)}
 
-/* Ambient background glow */
-.app::before {
-  content: '';
-  position: fixed;
-  top: -40%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
+/* SHARED */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.top-bar .logo{font-weight:300;font-size:18px;letter-spacing:3px;color:var(--t2)}
+.top-bar .date{font-weight:500;font-size:11px;color:var(--t3)}
+.section-title{font-weight:500;font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin:20px 0 10px}
 
-/* === SCREENS === */
-.screens {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid var(--card-border);border-radius:20px;padding:16px;backdrop-filter:blur(10px);box-shadow:0 2px 4px rgba(0,0,0,.25),0 8px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.04);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.card+.card{margin-top:10px}
 
-.screen {
-  position: absolute;
-  inset: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 20px 20px 100px;
-  opacity: 0;
-  transform: translateY(12px) scale(0.98);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  pointer-events: none;
-  -webkit-overflow-scrolling: touch;
-}
-.screen::-webkit-scrollbar { display: none; }
-.screen.active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
-}
+/* SCORE PILLS */
+.score-pills{display:flex;gap:14px;padding:14px 0 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.score-pills::-webkit-scrollbar{display:none}
+.score-pill{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.score-pill:active{transform:scale(.92)}
+.pill-wrap{width:48px;height:48px;border-radius:50%;position:relative;background:rgba(255,255,255,.025);box-shadow:0 2px 6px rgba(0,0,0,.25);transition:box-shadow .25s}
+.pill-wrap svg{position:absolute;inset:0}
+.pill-wrap .ps{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:400;font-size:14px}
+.score-pill.active .pill-wrap{box-shadow:0 0 0 1.5px var(--accent),0 0 12px rgba(201,169,110,.15)}
+.sp-label{font-size:8px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;transition:color .25s}
+.score-pill.active .sp-label{color:var(--t1)}
 
-/* === NAV === */
-.nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  background: rgba(17,17,19,0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid rgba(255,255,255,0.04);
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
+/* HERO ARC */
+.hero{position:relative;margin:0 -20px;padding:24px 20px 20px;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 35%,rgba(201,169,110,.08),transparent 70%)}
+.hero-arc{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.arc-w{position:relative;width:200px;height:115px;overflow:hidden}
+.arc-w svg{position:absolute;top:0;left:0;filter:drop-shadow(0 0 10px rgba(201,169,110,.2))}
+.arc-c{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);text-align:center}
+.arc-s{font-weight:200;font-size:52px;letter-spacing:-2px;line-height:1;text-shadow:0 0 30px rgba(201,169,110,.15)}
+.arc-q{font-weight:500;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-top:2px}
+.hero-lbl{font-weight:500;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1.5px;margin-top:10px}
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 12px;
-  border: none;
-  background: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.2s;
-}
-.nav-item:active { transform: scale(0.9); }
-.nav-item svg { width: 22px; height: 22px; fill: none; stroke: var(--text-tertiary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s, filter 0.3s; }
-.nav-item span { font-size: 10px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s; }
-.nav-item.active svg { stroke: var(--accent); filter: drop-shadow(0 0 6px rgba(201,169,110,0.4)); }
-.nav-item.active span { color: var(--accent); }
+/* EDITORIAL */
+.editorial{margin-top:16px}
+.ed-title{font-weight:300;font-size:20px;letter-spacing:-.3px;line-height:1.3;margin-bottom:8px}
+.ed-text{font-weight:400;font-size:13px;color:var(--t2);line-height:1.6}
+.btn{display:inline-block;margin-top:12px;padding:9px 22px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);border-radius:22px;font-family:inherit;font-weight:500;font-size:12px;color:var(--t1);cursor:pointer;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(10px);box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.04);transition:transform .15s}
+.btn:active{transform:scale(.96)}
 
-/* === SHARED === */
-.greeting { font-weight: 300; font-size: 26px; letter-spacing: -0.5px; line-height: 1.2; }
-.date-sub { font-weight: 500; font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-.section-title { font-weight: 500; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; margin-top: 24px; }
+/* CONTRIBUTOR BARS */
+.contrib-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.contrib-row:last-child{border-bottom:none}
+.contrib-label{font-weight:400;font-size:12px;color:var(--t2);width:90px;flex-shrink:0}
+.contrib-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}
+.contrib-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#A8893E,var(--accent));position:relative}
+.contrib-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.15),transparent);border-radius:3px 3px 0 0}
+.contrib-val{font-weight:500;font-size:11px;color:var(--t2);width:36px;text-align:right;flex-shrink:0}
 
-/* === GLASS CARDS === */
-.card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 20px;
-  padding: 16px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow:
-    0 2px 4px rgba(0,0,0,0.3),
-    0 8px 24px rgba(0,0,0,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  position: relative;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-  border-radius: 20px 20px 0 0;
-}
+/* SPOTLIGHT */
+.spotlight{margin-top:16px;border-radius:22px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 28px rgba(0,0,0,.3);transition:transform .25s}
+.spotlight:active{transform:scale(.98)}
+.spot-bg{height:140px;position:relative}
+.spot-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(transparent,rgba(10,10,12,.9))}
+.spot-content{position:absolute;bottom:0;left:0;right:0;padding:14px 18px;z-index:1}
+.spot-lbl{font-weight:500;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.spot-title{font-weight:300;font-size:15px;line-height:1.3}
+.spot-arrow{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:13px;z-index:2}
 
-.stat-value { font-weight: 300; font-size: 22px; letter-spacing: -0.5px; }
-.stat-label { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+/* STATS ROW */
+.stats-row{display:flex}
+.stat-col{flex:1;text-align:center;padding:12px 0}
+.stat-col+.stat-col{border-left:1px solid rgba(255,255,255,.03)}
+.stat-col .v{font-weight:300;font-size:17px;letter-spacing:-.5px}
+.stat-col .l{font-weight:500;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
 
-/* === 3D RING === */
-.ring-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 28px 0 24px;
-  position: relative;
-}
-.ring-container::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(201,169,110,0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
+/* BODY METRICS */
+.metric-row{display:flex;gap:8px}
+.metric{flex:1;text-align:center}
+.metric .mv{font-weight:300;font-size:19px;letter-spacing:-.5px}
+.metric .ml{font-weight:500;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.metric .mt{font-size:10px;color:var(--accent);margin-top:2px}
 
-.ring-wrap {
-  position: relative;
-  filter: drop-shadow(0 0 20px rgba(201,169,110,0.15));
-}
+/* CHART */
+.chart-box{position:relative;height:120px;margin:6px 0}
+.chart-box canvas{width:100%;height:100%}
+.chart-labels{display:flex;justify-content:space-between;font-size:9px;font-weight:500;color:var(--t3);margin-top:4px}
 
-.ring-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-.ring-score {
-  font-weight: 300;
-  font-size: 48px;
-  letter-spacing: -1px;
-  display: block;
-  text-shadow: 0 0 40px rgba(201,169,110,0.2);
-}
-.ring-label {
-  font-weight: 500;
-  font-size: 10px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-top: 10px;
-}
+/* HYPNOGRAM */
+.hypno-box{position:relative;height:80px;margin:6px 0}
+.hypno-box canvas{width:100%;height:100%}
 
-/* === HOME STAT CARDS === */
-.stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.stat-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 20px;
-  padding: 16px;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, background 0.3s;
-  -webkit-tap-highlight-color: transparent;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow:
-    0 2px 4px rgba(0,0,0,0.3),
-    0 8px 24px rgba(0,0,0,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-}
-.stat-card::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(201,169,110,0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-.stat-card:active {
-  transform: scale(0.97);
-  background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
-}
-.stat-card .icon { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.stat-card .icon svg {
-  width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(201,169,110,0.3));
-}
-.stat-card .icon span { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+/* ACTIVITY BARS */
+.bars-box{display:flex;align-items:flex-end;gap:2px;height:80px;margin:6px 0}
+.bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;position:relative;overflow:hidden}
+.bar::after{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,.18),transparent)}
 
-/* === SLEEP STAGES === */
-.stages-bar {
-  display: flex;
-  height: 32px;
-  border-radius: 10px;
-  overflow: hidden;
-  gap: 2px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-}
-.stage { transition: flex 0.4s ease; position: relative; overflow: hidden; }
-.stage::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
-}
-.stages-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 12px;
-}
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
-.legend-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  box-shadow: 0 0 6px currentColor;
-}
+/* SLEEP STAGES BAR */
+.stages-bar{display:flex;height:28px;border-radius:8px;overflow:hidden;gap:2px;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)}
+.stage{position:relative;overflow:hidden}
+.stage::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.12),transparent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.leg-dot{width:7px;height:7px;border-radius:50%}
 
-/* === STATS ROW === */
-.stats-row { display: flex; }
-.stats-row .stat-col {
-  flex: 1;
-  text-align: center;
-  padding: 14px 0;
-}
-.stats-row .stat-col + .stat-col { border-left: 1px solid rgba(255,255,255,0.04); }
-.stats-row .stat-col .val { font-weight: 300; font-size: 18px; letter-spacing: -0.5px; }
-.stats-row .stat-col .lbl { font-weight: 500; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+/* PULSE */
+.pulse-w{text-align:center;margin:24px 0 8px;position:relative}
+.pulse-w::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:160px;height:160px;background:radial-gradient(circle,rgba(201,169,110,.07),transparent 70%);border-radius:50%;animation:pg 1.5s ease-in-out infinite}
+@keyframes pg{0%,100%{transform:translate(-50%,-55%) scale(1);opacity:1}50%{transform:translate(-50%,-55%) scale(1.12);opacity:.45}}
+.bpm{font-weight:200;font-size:60px;letter-spacing:-2px;position:relative;z-index:1;text-shadow:0 0 30px rgba(201,169,110,.12);animation:pn 1.5s ease-in-out infinite}
+.bpm-u{font-weight:400;font-size:15px;color:var(--t2)}
+@keyframes pn{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(.98)}}
+.hr-pill{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--card-border);border-radius:12px;padding:6px 14px;font-size:12px;color:var(--t2);margin:10px auto 0;backdrop-filter:blur(10px);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.hr-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(201,169,110,.4)}
 
-/* === CHARTS === */
-.chart-container {
-  position: relative;
-  height: 140px;
-  margin-top: 8px;
-}
-.chart-container canvas {
-  width: 100%;
-  height: 100%;
-}
-.chart-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  margin-top: 6px;
-}
+/* TREND MINI */
+.trend-row{display:flex;gap:8px;margin-top:10px}
+.trend-card{flex:1;text-align:center;padding:10px 6px}
+.trend-card .tv{font-weight:300;font-size:16px;letter-spacing:-.3px}
+.trend-card .tl{font-weight:500;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.trend-card .td{font-size:10px;color:var(--green);margin-top:3px}
+.trend-card .td.down{color:#F87171}
 
-/* === ACTIVITY BARS === */
-.bars-container {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 100px;
-  margin-top: 8px;
-}
-.bar {
-  flex: 1;
-  border-radius: 4px 4px 0 0;
-  min-height: 4px;
-  transition: height 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
-.bar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
-  border-radius: 4px 4px 0 0;
-}
+/* PROFILE */
+.dev-card{display:flex;align-items:center;gap:12px}
+.dev-icon{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(201,169,110,.2),rgba(201,169,110,.04));display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(201,169,110,.08);border:1px solid rgba(201,169,110,.08)}
+.dev-icon svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.5;filter:drop-shadow(0 0 3px rgba(201,169,110,.25))}
+.dev-info{flex:1}
+.dev-name{font-weight:400;font-size:14px}
+.dev-status{font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;margin-top:1px}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.35)}
+.dev-batt{font-weight:500;font-size:12px;color:var(--accent)}
 
-/* === HEART PULSE === */
-.pulse-wrap {
-  text-align: center;
-  margin: 32px 0 0;
-  position: relative;
-}
-.pulse-wrap::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: pulse-glow 1.5s ease-in-out infinite;
-}
-@keyframes pulse-glow {
-  0%, 100% { transform: translate(-50%, -60%) scale(1); opacity: 1; }
-  50% { transform: translate(-50%, -60%) scale(1.15); opacity: 0.5; }
-}
+.info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.info-row:last-child{border-bottom:none}
+.ik{font-weight:400;font-size:13px;color:var(--t2)}
+.iv{font-weight:400;font-size:13px}
 
-.pulse-bpm {
-  font-weight: 300;
-  font-size: 64px;
-  letter-spacing: -2px;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 0 40px rgba(201,169,110,0.15);
-  animation: pulse-num 1.5s ease-in-out infinite;
-}
-.pulse-unit { font-weight: 400; font-size: 16px; color: var(--text-secondary); }
-@keyframes pulse-num {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(0.98); }
-}
+.goal-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.goal-row:last-child{border-bottom:none}
+.gl{font-weight:400;font-size:13px;color:var(--t2)}
+.gv{font-weight:400;font-size:13px;background:rgba(255,255,255,.04);border:1px solid var(--card-border);border-radius:8px;padding:5px 12px}
 
-.hr-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  margin: 14px auto 0;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
-}
-.hr-badge-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px rgba(201,169,110,0.5);
-}
+/* DATE TABS */
+.date-tabs{display:flex;gap:0;margin:10px 0;background:rgba(255,255,255,.03);border-radius:10px;padding:3px;border:1px solid var(--card-border)}
+.date-tab{flex:1;text-align:center;padding:7px 0;font-size:11px;font-weight:500;color:var(--t3);cursor:pointer;border-radius:8px;transition:all .2s}
+.date-tab.active{background:rgba(255,255,255,.06);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
-/* === PROFILE === */
-.device-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.device-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(201,169,110,0.25), rgba(201,169,110,0.05));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 20px rgba(201,169,110,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
-  border: 1px solid rgba(201,169,110,0.1);
-}
-.device-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.5; filter: drop-shadow(0 0 4px rgba(201,169,110,0.3)); }
-.device-info { flex: 1; }
-.device-name { font-weight: 400; font-size: 15px; }
-.device-status { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; box-shadow: 0 0 8px rgba(74,222,128,0.4); }
-.device-battery { font-weight: 500; font-size: 13px; color: var(--accent); text-shadow: 0 0 10px rgba(201,169,110,0.2); }
+.wordmark{text-align:center;font-weight:300;font-size:14px;color:var(--t3);letter-spacing:3px;margin-top:24px;padding-bottom:16px}
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-}
-.info-row:last-child { border-bottom: none; }
-.info-key { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
-.info-val { font-weight: 400; font-size: 14px; }
-
-.goal-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-}
-.goal-row:last-child { border-bottom: none; }
-.goal-label { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
-.goal-value {
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-primary);
-  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-  padding: 6px 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.wordmark {
-  text-align: center;
-  font-weight: 300;
-  font-size: 16px;
-  color: var(--text-tertiary);
-  letter-spacing: 4px;
-  margin-top: 32px;
-  padding-bottom: 20px;
-  text-shadow: 0 0 20px rgba(201,169,110,0.1);
-}
-
-/* 3-col stat row */
-.stat-3col {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-}
-.stat-3col .card { text-align: center; }
-
-/* === HOME: SCORE PILLS (horizontal scroll) === */
-.score-pills {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 20px 0 8px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.score-pills::-webkit-scrollbar { display: none; }
-
-.score-pill {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.2s;
-}
-.score-pill:active { transform: scale(0.92); }
-.score-pill.active .pill-ring-wrap { box-shadow: 0 0 0 2px var(--accent), 0 0 16px rgba(201,169,110,0.2); }
-
-.pill-ring-wrap {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  position: relative;
-  background: rgba(255,255,255,0.03);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
-  transition: box-shadow 0.3s;
-}
-.pill-ring-wrap svg { position: absolute; inset: 0; }
-.pill-ring-wrap .pill-score {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: -0.3px;
-}
-.score-pill-label {
-  font-weight: 500;
-  font-size: 9px;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color 0.3s;
-}
-.score-pill.active .score-pill-label { color: var(--text-primary); }
-
-/* === HOME: HERO ARC === */
-.hero-section {
-  position: relative;
-  margin: 0 -20px;
-  padding: 32px 20px 28px;
-  overflow: hidden;
-}
-.hero-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,169,110,0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 120% 80% at 50% 80%, rgba(20,18,14,0.9) 0%, transparent 60%);
-  pointer-events: none;
-}
-.hero-section::after {
-  content: '';
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 60%);
-  border-radius: 50%;
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.hero-arc {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.arc-wrap {
-  position: relative;
-  width: 220px;
-  height: 130px;
-  overflow: hidden;
-}
-.arc-wrap svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  filter: drop-shadow(0 0 12px rgba(201,169,110,0.2));
-}
-.arc-center {
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-.arc-score {
-  font-weight: 200;
-  font-size: 56px;
-  letter-spacing: -2px;
-  display: block;
-  text-shadow: 0 0 40px rgba(201,169,110,0.2);
-  line-height: 1;
-}
-.arc-quality {
-  font-weight: 500;
-  font-size: 12px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 2px;
-}
-
-.hero-label {
-  font-weight: 500;
-  font-size: 10px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-top: 12px;
-}
-
-/* === HOME: EDITORIAL BLOCK === */
-.editorial-block {
-  margin-top: 20px;
-}
-.editorial-title {
-  font-weight: 300;
-  font-size: 22px;
-  letter-spacing: -0.5px;
-  line-height: 1.3;
-  margin-bottom: 10px;
-}
-.editorial-text {
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-.learn-more-btn {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 10px 24px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 24px;
-  font-family: inherit;
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--text-primary);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
-  transition: transform 0.2s, background 0.2s;
-}
-.learn-more-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.1); }
-
-/* === HOME: SPOTLIGHT CARD === */
-.spotlight-card {
-  margin-top: 20px;
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-.spotlight-card:active { transform: scale(0.98); }
-.spotlight-bg {
-  width: 100%;
-  height: 160px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-  position: relative;
-}
-.spotlight-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 70% 30%, rgba(201,169,110,0.12) 0%, transparent 50%),
-    radial-gradient(circle at 30% 80%, rgba(100,120,180,0.08) 0%, transparent 40%);
-}
-.spotlight-bg::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 80px;
-  background: linear-gradient(transparent, rgba(10,10,12,0.9));
-}
-.spotlight-content {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 16px 20px;
-  z-index: 1;
-}
-.spotlight-label {
-  font-weight: 500;
-  font-size: 10px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-.spotlight-title {
-  font-weight: 300;
-  font-size: 17px;
-  line-height: 1.3;
-}
-.spotlight-arrow {
-  position: absolute;
-  top: 16px; right: 16px;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  font-size: 14px;
-  z-index: 2;
-}
-
-/* 3D SVG ring styling */
-.ring-track { fill: none; stroke: rgba(255,255,255,0.04); }
-.ring-track-inner { fill: none; stroke: rgba(255,255,255,0.03); }
-.ring-progress {
-  fill: none;
-  stroke: url(#goldGradient);
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 6px rgba(201,169,110,0.4));
-}
-.ring-progress-inner {
-  fill: none;
-  stroke: url(#goldGradientDim);
-  stroke-linecap: round;
-}
-.ring-bg-glow {
-  fill: url(#ringGlow);
-}
+/* SVG classes */
+.ring-track{fill:none;stroke:rgba(255,255,255,.04)}
+.ring-prog{fill:none;stroke:url(#gG);stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(201,169,110,.3))}
 </style>
 </head>
 <body>
-
-<!-- Shared SVG defs -->
-<svg style="position:absolute;width:0;height:0">
-  <defs>
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#E8D4A0"/>
-      <stop offset="50%" stop-color="#C9A96E"/>
-      <stop offset="100%" stop-color="#A8893E"/>
-    </linearGradient>
-    <linearGradient id="goldGradientDim" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgba(201,169,110,0.5)"/>
-      <stop offset="100%" stop-color="rgba(168,137,62,0.3)"/>
-    </linearGradient>
-    <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="rgba(201,169,110,0.06)"/>
-      <stop offset="100%" stop-color="transparent"/>
-    </radialGradient>
-  </defs>
-</svg>
+<svg style="position:absolute;width:0;height:0"><defs>
+<linearGradient id="gG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8D4A0"/><stop offset="50%" stop-color="#C9A96E"/><stop offset="100%" stop-color="#A8893E"/></linearGradient>
+<linearGradient id="gD" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(201,169,110,.45)"/><stop offset="100%" stop-color="rgba(168,137,62,.25)"/></linearGradient>
+</defs></svg>
 
 <div class="app">
-  <div class="screens">
+<div class="screens">
 
-    <!-- ===== HOME ===== -->
-    <div class="screen active" id="screen-home">
+<!-- ========== HOME ========== -->
+<div class="screen active" id="s-home">
+  <div class="top-bar"><div class="logo">orb</div><div class="date" id="date-d"></div></div>
 
-      <!-- Top bar -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <div class="greeting" style="font-size:20px;">orb</div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <div class="date-sub" id="date-display" style="margin:0;"></div>
-        </div>
-      </div>
-
-      <!-- Horizontal Score Pills -->
-      <div class="score-pills">
-        <div class="score-pill active" onclick="setHeroScore(this, 82, 'Readiness', 'Good', 0.82)">
-          <div class="pill-ring-wrap">
-            <svg width="52" height="52" viewBox="0 0 52 52">
-              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
-              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
-                stroke-dasharray="113 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
-            </svg>
-            <span class="pill-score">82</span>
-          </div>
-          <span class="score-pill-label">Readiness</span>
-        </div>
-        <div class="score-pill" onclick="setHeroScore(this, 85, 'Sleep', 'Optimal', 0.85)">
-          <div class="pill-ring-wrap">
-            <svg width="52" height="52" viewBox="0 0 52 52">
-              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
-              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
-                stroke-dasharray="117 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
-            </svg>
-            <span class="pill-score">85</span>
-          </div>
-          <span class="score-pill-label">Sleep</span>
-        </div>
-        <div class="score-pill" onclick="setHeroScore(this, 84, 'Activity', 'On track', 0.84)">
-          <div class="pill-ring-wrap">
-            <svg width="52" height="52" viewBox="0 0 52 52">
-              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
-              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
-                stroke-dasharray="116 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
-            </svg>
-            <span class="pill-score">84</span>
-          </div>
-          <span class="score-pill-label">Activity</span>
-        </div>
-        <div class="score-pill" onclick="setHeroScore(this, 62, 'Heart Rate', '62 bpm', 0.52)">
-          <div class="pill-ring-wrap">
-            <svg width="52" height="52" viewBox="0 0 52 52">
-              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
-              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
-                stroke-dasharray="72 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
-            </svg>
-            <span class="pill-score">62</span>
-          </div>
-          <span class="score-pill-label">Heart</span>
-        </div>
-      </div>
-
-      <!-- Hero Arc Section -->
-      <div class="hero-section">
-        <div class="hero-arc">
-          <div class="arc-wrap">
-            <svg width="220" height="130" viewBox="0 0 220 130">
-              <!-- Track arc -->
-              <path d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6" stroke-linecap="round"/>
-              <!-- Scale ticks -->
-              <path d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="10" stroke-linecap="butt"
-                stroke-dasharray="1 8"/>
-              <!-- Progress arc -->
-              <path id="hero-arc-progress" d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="url(#goldGradient)" stroke-width="6" stroke-linecap="round"
-                stroke-dasharray="232 283" style="filter:drop-shadow(0 0 8px rgba(201,169,110,0.35))"/>
-              <!-- End glow dot -->
-              <circle id="hero-arc-dot" cx="195" cy="38" r="4" fill="#C9A96E" style="filter:drop-shadow(0 0 6px rgba(201,169,110,0.5))"/>
-            </svg>
-            <div class="arc-center">
-              <span class="arc-score" id="hero-score">82</span>
-              <span class="arc-quality" id="hero-quality">Good</span>
-            </div>
-          </div>
-          <div class="hero-label" id="hero-label">Readiness</div>
-        </div>
-      </div>
-
-      <!-- Editorial Content -->
-      <div class="editorial-block">
-        <div class="editorial-title">Sleep and recovery</div>
-        <div class="editorial-text">Your Sleep contributor shows that last night's sleep quality was excellent and supported your recovery. Your resting heart rate dropped 3 bpm this week — a sign your body is adapting well.</div>
-        <button class="learn-more-btn" onclick="switchTab(1)">Learn more</button>
-      </div>
-
-      <!-- Spotlight Card -->
-      <div class="spotlight-card" onclick="switchTab(2)">
-        <div class="spotlight-bg"></div>
-        <div class="spotlight-content">
-          <div class="spotlight-label">Activity goal</div>
-          <div class="spotlight-title">420 / 500 kcal — 8,240 steps today</div>
-        </div>
-        <div class="spotlight-arrow">&#8250;</div>
-      </div>
-
-      <div class="wordmark" style="margin-top:24px;">orb</div>
+  <div class="score-pills">
+    <div class="score-pill active" onclick="heroSet(this,82,'Readiness','Good',.82,'readiness')">
+      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="103 126" transform="rotate(-90 24 24)"/></svg><span class="ps">82</span></div>
+      <span class="sp-label">Readiness</span>
     </div>
-
-    <!-- ===== SLEEP ===== -->
-    <div class="screen" id="screen-sleep">
-      <div class="greeting">Sleep</div>
-      <div class="date-sub">Last night</div>
-
-      <div class="ring-container">
-        <div class="ring-wrap">
-          <svg width="180" height="180" viewBox="0 0 180 180">
-            <circle class="ring-bg-glow" cx="90" cy="90" r="85"/>
-            <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="6"/>
-            <circle class="ring-progress" cx="90" cy="90" r="76" stroke-width="6"
-              stroke-dasharray="406 478" transform="rotate(-90 90 90)"/>
-          </svg>
-          <div class="ring-center">
-            <span class="ring-score">85</span>
-          </div>
-        </div>
-        <div class="ring-label">Sleep Score</div>
-      </div>
-
-      <div class="section-title">Sleep Stages</div>
-      <div class="card">
-        <div class="stages-bar">
-          <div class="stage" style="flex:23;background:rgba(255,255,255,0.15);"></div>
-          <div class="stage" style="flex:108;background:var(--accent);"></div>
-          <div class="stage" style="flex:222;background:var(--accent-dim);"></div>
-          <div class="stage" style="flex:91;background:#E8C46E;"></div>
-        </div>
-        <div class="stages-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.15);box-shadow:0 0 6px rgba(255,255,255,0.1)"></div>Awake 23m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--accent);box-shadow:0 0 6px rgba(201,169,110,0.4)"></div>REM 1h 48m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-dim);box-shadow:0 0 6px rgba(201,169,110,0.2)"></div>Light 3h 42m</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#E8C46E;box-shadow:0 0 6px rgba(232,196,110,0.3)"></div>Deep 1h 31m</div>
-        </div>
-      </div>
-
-      <div class="section-title">Summary</div>
-      <div class="card">
-        <div class="stats-row">
-          <div class="stat-col"><div class="val">7h 52m</div><div class="lbl">In bed</div></div>
-          <div class="stat-col"><div class="val">7h 24m</div><div class="lbl">Asleep</div></div>
-          <div class="stat-col"><div class="val">94%</div><div class="lbl">Efficiency</div></div>
-        </div>
-      </div>
-
-      <div class="section-title">Nightly Heart Rate</div>
-      <div class="card">
-        <div class="chart-container"><canvas id="sleep-hr-chart"></canvas></div>
-        <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
-      </div>
+    <div class="score-pill" onclick="heroSet(this,85,'Sleep','Optimal',.85,'sleep')">
+      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="107 126" transform="rotate(-90 24 24)"/></svg><span class="ps">85</span></div>
+      <span class="sp-label">Sleep</span>
     </div>
-
-    <!-- ===== ACTIVITY ===== -->
-    <div class="screen" id="screen-activity">
-      <div class="greeting">Activity</div>
-      <div class="date-sub">Today</div>
-
-      <div class="ring-container">
-        <div class="ring-wrap">
-          <svg width="180" height="180" viewBox="0 0 180 180">
-            <circle class="ring-bg-glow" cx="90" cy="90" r="85"/>
-            <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="6"/>
-            <circle class="ring-progress" cx="90" cy="90" r="76" stroke-width="6"
-              stroke-dasharray="401 478" transform="rotate(-90 90 90)"/>
-          </svg>
-          <div class="ring-center">
-            <span class="ring-score" style="font-size:36px;">420</span>
-            <span style="font-size:11px;font-weight:500;color:var(--text-secondary);display:block;margin-top:-2px;">/ 500 kcal</span>
-          </div>
-        </div>
-        <div class="ring-label">Move Goal</div>
-      </div>
-
-      <div class="stat-3col">
-        <div class="card">
-          <div class="stat-value" style="font-size:20px;">8,240</div>
-          <div class="stat-label">Steps</div>
-        </div>
-        <div class="card">
-          <div class="stat-value" style="font-size:20px;">420</div>
-          <div class="stat-label">Calories</div>
-        </div>
-        <div class="card">
-          <div class="stat-value" style="font-size:20px;">42m</div>
-          <div class="stat-label">Active</div>
-        </div>
-      </div>
-
-      <div class="section-title">Hourly Activity</div>
-      <div class="card">
-        <div class="bars-container" id="activity-bars"></div>
-        <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
-      </div>
+    <div class="score-pill" onclick="heroSet(this,84,'Activity','On track',.84,'activity')">
+      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="106 126" transform="rotate(-90 24 24)"/></svg><span class="ps">84</span></div>
+      <span class="sp-label">Activity</span>
     </div>
-
-    <!-- ===== HEART RATE ===== -->
-    <div class="screen" id="screen-heart">
-      <div class="greeting">Heart Rate</div>
-      <div class="date-sub">Today</div>
-
-      <div class="pulse-wrap">
-        <div class="pulse-bpm">62 <span class="pulse-unit">bpm</span></div>
-        <div style="display:flex;justify-content:center;">
-          <div class="hr-badge"><div class="hr-badge-dot"></div>Resting: 58 bpm</div>
-        </div>
-      </div>
-
-      <div class="section-title">24-Hour Trend</div>
-      <div class="card">
-        <div class="chart-container"><canvas id="hr-chart"></canvas></div>
-        <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
-      </div>
-
-      <div class="section-title">Daily Stats</div>
-      <div class="card">
-        <div class="stats-row">
-          <div class="stat-col"><div class="val">52</div><div class="lbl">Min</div></div>
-          <div class="stat-col"><div class="val">68</div><div class="lbl">Avg</div></div>
-          <div class="stat-col"><div class="val">124</div><div class="lbl">Max</div></div>
-        </div>
-      </div>
+    <div class="score-pill" onclick="heroSet(this,62,'Heart Rate','62 bpm',.5,'heart')">
+      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="63 126" transform="rotate(-90 24 24)"/></svg><span class="ps">62</span></div>
+      <span class="sp-label">Heart</span>
     </div>
-
-    <!-- ===== PROFILE ===== -->
-    <div class="screen" id="screen-profile">
-      <div class="greeting">Profile</div>
-      <div class="date-sub">Settings & device</div>
-
-      <div class="section-title">Device</div>
-      <div class="card">
-        <div class="device-card">
-          <div class="device-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
-          </div>
-          <div class="device-info">
-            <div class="device-name">Orb Bracelet</div>
-            <div class="device-status"><div class="status-dot"></div>Connected · Synced just now</div>
-          </div>
-          <div class="device-battery">82%</div>
-        </div>
-      </div>
-
-      <div class="section-title">Personal Info</div>
-      <div class="card">
-        <div class="info-row"><span class="info-key">Name</span><span class="info-val">Kris</span></div>
-        <div class="info-row"><span class="info-key">Age</span><span class="info-val">28</span></div>
-        <div class="info-row"><span class="info-key">Weight</span><span class="info-val">165 lbs</span></div>
-        <div class="info-row"><span class="info-key">Height</span><span class="info-val">5'10"</span></div>
-      </div>
-
-      <div class="section-title">Goals</div>
-      <div class="card">
-        <div class="goal-row"><span class="goal-label">Daily Steps</span><span class="goal-value">10,000</span></div>
-        <div class="goal-row"><span class="goal-label">Sleep</span><span class="goal-value">8h</span></div>
-        <div class="goal-row"><span class="goal-label">Calories</span><span class="goal-value">500 kcal</span></div>
-      </div>
-
-      <div class="wordmark">orb</div>
+    <div class="score-pill" onclick="heroSet(this,36,'Cycle Day','Day 15',.5,'cycle')">
+      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="63 126" transform="rotate(-90 24 24)"/></svg><span class="ps">15</span></div>
+      <span class="sp-label">Cycle</span>
     </div>
-
   </div>
 
-  <!-- ===== BOTTOM NAV ===== -->
-  <nav class="nav">
-    <button class="nav-item active" onclick="switchTab(0)">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="switchTab(1)">
-      <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <span>Sleep</span>
-    </button>
-    <button class="nav-item" onclick="switchTab(2)">
-      <svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0 0 16 0c0-5-4-8-8-12z"/></svg>
-      <span>Activity</span>
-    </button>
-    <button class="nav-item" onclick="switchTab(3)">
-      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span>Heart</span>
-    </button>
-    <button class="nav-item" onclick="switchTab(4)">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Profile</span>
-    </button>
-  </nav>
+  <div class="hero">
+    <div class="hero-arc">
+      <div class="arc-w">
+        <svg width="200" height="115" viewBox="0 0 200 115">
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="5.5" stroke-linecap="round"/>
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="rgba(255,255,255,.025)" stroke-width="10" stroke-dasharray="1 7.5" stroke-linecap="butt"/>
+          <path id="h-arc" d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="url(#gG)" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="219 267" style="filter:drop-shadow(0 0 7px rgba(201,169,110,.3))"/>
+        </svg>
+        <div class="arc-c"><span class="arc-s" id="h-s">82</span><span class="arc-q" id="h-q">Good</span></div>
+      </div>
+      <div class="hero-lbl" id="h-l">Readiness</div>
+    </div>
+  </div>
+
+  <!-- Editorial -->
+  <div class="editorial">
+    <div class="ed-title">Sleep and recovery</div>
+    <div class="ed-text">Your Sleep contributor shows last night's sleep quality was excellent and supported your recovery. Resting heart rate dropped 3 bpm this week — your body is adapting well.</div>
+    <button class="btn" onclick="switchTab(1)">Learn more</button>
+  </div>
+
+  <!-- Contributors -->
+  <div class="section-title">Contributors</div>
+  <div class="card" id="home-contribs">
+    <div class="contrib-row"><span class="contrib-label">Previous night</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:92%"></div></div><span class="contrib-val">92</span></div>
+    <div class="contrib-row"><span class="contrib-label">Sleep balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:85%"></div></div><span class="contrib-val">85</span></div>
+    <div class="contrib-row"><span class="contrib-label">HRV balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
+    <div class="contrib-row"><span class="contrib-label">Resting HR</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:90%"></div></div><span class="contrib-val">90</span></div>
+    <div class="contrib-row"><span class="contrib-label">Body temp</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:82%"></div></div><span class="contrib-val">82</span></div>
+    <div class="contrib-row"><span class="contrib-label">Recovery index</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:78%"></div></div><span class="contrib-val">78</span></div>
+    <div class="contrib-row"><span class="contrib-label">Activity balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:80%"></div></div><span class="contrib-val">80</span></div>
+  </div>
+
+  <!-- Body Metrics -->
+  <div class="section-title">Body Metrics</div>
+  <div class="card">
+    <div class="metric-row">
+      <div class="metric"><div class="mv">97.8°</div><div class="ml">Body Temp</div><div class="mt">-0.2° vs baseline</div></div>
+      <div class="metric"><div class="mv">42ms</div><div class="ml">HRV</div><div class="mt">+5ms this week</div></div>
+      <div class="metric"><div class="mv">98%</div><div class="ml">SpO2</div><div class="mt">Normal</div></div>
+    </div>
+  </div>
+
+  <!-- Spotlight -->
+  <div class="spotlight" onclick="switchTab(2)">
+    <div class="spot-bg" style="background:linear-gradient(135deg,#1a1a2e,#16213e 40%,#0f3460)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(201,169,110,.1),transparent 50%),radial-gradient(circle at 30% 80%,rgba(100,120,180,.06),transparent 40%)"></div>
+    </div>
+    <div class="spot-content"><div class="spot-lbl">Activity goal</div><div class="spot-title">420 / 500 kcal — 84% complete</div></div>
+    <div class="spot-arrow">&#8250;</div>
+  </div>
+
+  <!-- Weekly Trends -->
+  <div class="section-title">This Week</div>
+  <div class="trend-row">
+    <div class="card trend-card"><div class="tv">58</div><div class="tl">Resting HR</div><div class="td">&#9660; 3 bpm</div></div>
+    <div class="card trend-card"><div class="tv">42ms</div><div class="tl">HRV</div><div class="td">&#9650; 5ms</div></div>
+    <div class="card trend-card"><div class="tv">7.2h</div><div class="tl">Avg Sleep</div><div class="td">&#9650; 12m</div></div>
+  </div>
+
+  <div class="wordmark">orb</div>
+</div>
+
+<!-- ========== SLEEP ========== -->
+<div class="screen" id="s-sleep">
+  <div class="top-bar"><div class="logo">orb</div><div style="font-weight:300;font-size:18px;">Sleep</div></div>
+
+  <div class="date-tabs">
+    <div class="date-tab">Mon</div><div class="date-tab">Tue</div><div class="date-tab">Wed</div><div class="date-tab">Thu</div><div class="date-tab">Fri</div><div class="date-tab">Sat</div><div class="date-tab active">Today</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-arc">
+      <div class="arc-w">
+        <svg width="200" height="115" viewBox="0 0 200 115">
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="5.5" stroke-linecap="round"/>
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="url(#gG)" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="227 267" style="filter:drop-shadow(0 0 7px rgba(201,169,110,.3))"/>
+        </svg>
+        <div class="arc-c"><span class="arc-s">85</span><span class="arc-q">Optimal</span></div>
+      </div>
+      <div class="hero-lbl">Sleep Score</div>
+    </div>
+  </div>
+
+  <!-- Sleep Timeline (Hypnogram) -->
+  <div class="section-title">Sleep Stages Timeline</div>
+  <div class="card">
+    <div class="hypno-box"><canvas id="c-hypno"></canvas></div>
+    <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+  </div>
+
+  <!-- Stages Bar -->
+  <div class="section-title">Sleep Stages</div>
+  <div class="card">
+    <div class="stages-bar">
+      <div class="stage" style="flex:23;background:rgba(255,255,255,.12)"></div>
+      <div class="stage" style="flex:108;background:var(--accent)"></div>
+      <div class="stage" style="flex:222;background:var(--accent-dim)"></div>
+      <div class="stage" style="flex:91;background:#E8C46E"></div>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(255,255,255,.12)"></div>Awake 23m</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>REM 1h 48m</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--accent-dim)"></div>Light 3h 42m</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#E8C46E"></div>Deep 1h 31m</div>
+    </div>
+  </div>
+
+  <!-- Sleep Summary -->
+  <div class="section-title">Summary</div>
+  <div class="card">
+    <div class="stats-row">
+      <div class="stat-col"><div class="v">7h 52m</div><div class="l">In bed</div></div>
+      <div class="stat-col"><div class="v">7h 24m</div><div class="l">Asleep</div></div>
+      <div class="stat-col"><div class="v">94%</div><div class="l">Efficiency</div></div>
+    </div>
+  </div>
+
+  <!-- Contributors -->
+  <div class="section-title">Contributors</div>
+  <div class="card">
+    <div class="contrib-row"><span class="contrib-label">Total sleep</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
+    <div class="contrib-row"><span class="contrib-label">Efficiency</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:94%"></div></div><span class="contrib-val">94</span></div>
+    <div class="contrib-row"><span class="contrib-label">Restfulness</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:82%"></div></div><span class="contrib-val">82</span></div>
+    <div class="contrib-row"><span class="contrib-label">REM sleep</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:86%"></div></div><span class="contrib-val">86</span></div>
+    <div class="contrib-row"><span class="contrib-label">Deep sleep</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:78%"></div></div><span class="contrib-val">78</span></div>
+    <div class="contrib-row"><span class="contrib-label">Latency</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:90%"></div></div><span class="contrib-val">90</span></div>
+    <div class="contrib-row"><span class="contrib-label">Timing</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:85%"></div></div><span class="contrib-val">85</span></div>
+  </div>
+
+  <!-- Nightly HR -->
+  <div class="section-title">Nightly Heart Rate</div>
+  <div class="card">
+    <div class="chart-box"><canvas id="c-shr"></canvas></div>
+    <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+  </div>
+
+  <!-- Nightly HRV -->
+  <div class="section-title">Heart Rate Variability</div>
+  <div class="card">
+    <div class="chart-box"><canvas id="c-shrv"></canvas></div>
+    <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+  </div>
+
+  <!-- Movement -->
+  <div class="section-title">Movement</div>
+  <div class="card">
+    <div class="bars-box" id="sleep-movement"></div>
+    <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+  </div>
+
+  <div class="wordmark">orb</div>
+</div>
+
+<!-- ========== ACTIVITY ========== -->
+<div class="screen" id="s-activity">
+  <div class="top-bar"><div class="logo">orb</div><div style="font-weight:300;font-size:18px;">Activity</div></div>
+
+  <div class="date-tabs">
+    <div class="date-tab">Mon</div><div class="date-tab">Tue</div><div class="date-tab">Wed</div><div class="date-tab">Thu</div><div class="date-tab">Fri</div><div class="date-tab">Sat</div><div class="date-tab active">Today</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-arc">
+      <div class="arc-w">
+        <svg width="200" height="115" viewBox="0 0 200 115">
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="5.5" stroke-linecap="round"/>
+          <path d="M 15 110 A 85 85 0 0 1 185 110" fill="none" stroke="url(#gG)" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="224 267" style="filter:drop-shadow(0 0 7px rgba(201,169,110,.3))"/>
+        </svg>
+        <div class="arc-c"><span class="arc-s" style="font-size:44px">420</span><span class="arc-q">/ 500 kcal</span></div>
+      </div>
+      <div class="hero-lbl">Move Goal</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="card" style="margin-top:4px">
+    <div class="stats-row">
+      <div class="stat-col"><div class="v">8,240</div><div class="l">Steps</div></div>
+      <div class="stat-col"><div class="v">420</div><div class="l">Calories</div></div>
+      <div class="stat-col"><div class="v">42m</div><div class="l">Active</div></div>
+    </div>
+  </div>
+
+  <!-- Hourly Activity -->
+  <div class="section-title">Hourly Activity</div>
+  <div class="card">
+    <div class="bars-box" id="act-bars"></div>
+    <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+  </div>
+
+  <!-- Contributors -->
+  <div class="section-title">Contributors</div>
+  <div class="card">
+    <div class="contrib-row"><span class="contrib-label">Move goal</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:84%"></div></div><span class="contrib-val">84</span></div>
+    <div class="contrib-row"><span class="contrib-label">Steps</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:82%"></div></div><span class="contrib-val">82</span></div>
+    <div class="contrib-row"><span class="contrib-label">Training freq</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:75%"></div></div><span class="contrib-val">75</span></div>
+    <div class="contrib-row"><span class="contrib-label">Training vol</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:70%"></div></div><span class="contrib-val">70</span></div>
+    <div class="contrib-row"><span class="contrib-label">Recovery time</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
+  </div>
+
+  <!-- Walking Equivalency -->
+  <div class="section-title">Movement Detail</div>
+  <div class="card">
+    <div class="stats-row">
+      <div class="stat-col"><div class="v">3.8 mi</div><div class="l">Distance</div></div>
+      <div class="stat-col"><div class="v">12</div><div class="l">Floors</div></div>
+      <div class="stat-col"><div class="v">68%</div><div class="l">Goal</div></div>
+    </div>
+  </div>
+
+  <div class="wordmark">orb</div>
+</div>
+
+<!-- ========== HEART ========== -->
+<div class="screen" id="s-heart">
+  <div class="top-bar"><div class="logo">orb</div><div style="font-weight:300;font-size:18px;">Heart Rate</div></div>
+
+  <div class="date-tabs">
+    <div class="date-tab">Mon</div><div class="date-tab">Tue</div><div class="date-tab">Wed</div><div class="date-tab">Thu</div><div class="date-tab">Fri</div><div class="date-tab">Sat</div><div class="date-tab active">Today</div>
+  </div>
+
+  <div class="pulse-w">
+    <div class="bpm">62 <span class="bpm-u">bpm</span></div>
+    <div style="display:flex;justify-content:center"><div class="hr-pill"><div class="hr-dot"></div>Resting: 58 bpm</div></div>
+  </div>
+
+  <!-- 24h Chart -->
+  <div class="section-title">24-Hour Trend</div>
+  <div class="card">
+    <div class="chart-box"><canvas id="c-hr24"></canvas></div>
+    <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+  </div>
+
+  <!-- Daily Stats -->
+  <div class="section-title">Daily Stats</div>
+  <div class="card">
+    <div class="stats-row">
+      <div class="stat-col"><div class="v">52</div><div class="l">Min</div></div>
+      <div class="stat-col"><div class="v">68</div><div class="l">Avg</div></div>
+      <div class="stat-col"><div class="v">124</div><div class="l">Max</div></div>
+    </div>
+  </div>
+
+  <!-- HRV -->
+  <div class="section-title">Heart Rate Variability</div>
+  <div class="card">
+    <div class="chart-box"><canvas id="c-hrv24"></canvas></div>
+    <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <div class="stats-row">
+      <div class="stat-col"><div class="v">22ms</div><div class="l">Min</div></div>
+      <div class="stat-col"><div class="v">42ms</div><div class="l">Avg</div></div>
+      <div class="stat-col"><div class="v">68ms</div><div class="l">Max</div></div>
+    </div>
+  </div>
+
+  <!-- Weekly Resting HR Trend -->
+  <div class="section-title">Resting HR — 7 Day</div>
+  <div class="card">
+    <div class="chart-box"><canvas id="c-rhr7"></canvas></div>
+    <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Today</span></div>
+  </div>
+
+  <div class="wordmark">orb</div>
+</div>
+
+<!-- ========== PROFILE ========== -->
+<div class="screen" id="s-profile">
+  <div class="top-bar"><div class="logo">orb</div><div style="font-weight:300;font-size:18px;">Profile</div></div>
+
+  <div class="section-title">Device</div>
+  <div class="card">
+    <div class="dev-card">
+      <div class="dev-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <div class="dev-info"><div class="dev-name">Orb Bracelet</div><div class="dev-status"><div class="status-dot"></div>Connected · Synced just now</div></div>
+      <div class="dev-batt">82%</div>
+    </div>
+  </div>
+
+  <div class="section-title">Personal Info</div>
+  <div class="card">
+    <div class="info-row"><span class="ik">Name</span><span class="iv">Kris</span></div>
+    <div class="info-row"><span class="ik">Age</span><span class="iv">28</span></div>
+    <div class="info-row"><span class="ik">Weight</span><span class="iv">165 lbs</span></div>
+    <div class="info-row"><span class="ik">Height</span><span class="iv">5'10"</span></div>
+  </div>
+
+  <div class="section-title">Goals</div>
+  <div class="card">
+    <div class="goal-row"><span class="gl">Daily Steps</span><span class="gv">10,000</span></div>
+    <div class="goal-row"><span class="gl">Sleep</span><span class="gv">8h</span></div>
+    <div class="goal-row"><span class="gl">Calories</span><span class="gv">500 kcal</span></div>
+  </div>
+
+  <div class="section-title">Connected Services</div>
+  <div class="card">
+    <div class="info-row"><span class="ik">Apple Health</span><span class="iv" style="color:var(--green)">Connected</span></div>
+    <div class="info-row"><span class="ik">Google Fit</span><span class="iv" style="color:var(--t3)">Not connected</span></div>
+    <div class="info-row"><span class="ik">Strava</span><span class="iv" style="color:var(--t3)">Not connected</span></div>
+  </div>
+
+  <div class="section-title">About</div>
+  <div class="card">
+    <div class="info-row"><span class="ik">Firmware</span><span class="iv">v2.4.1</span></div>
+    <div class="info-row"><span class="ik">App version</span><span class="iv">1.0.0</span></div>
+    <div class="info-row"><span class="ik">Serial</span><span class="iv">ORB-82A4F1</span></div>
+  </div>
+
+  <div class="wordmark">orb</div>
+</div>
+
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-item active" onclick="switchTab(0)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Today</span></button>
+  <button class="nav-item" onclick="switchTab(1)"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>Sleep</span></button>
+  <button class="nav-item" onclick="switchTab(2)"><svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0 0 16 0c0-5-4-8-8-12z"/></svg><span>Activity</span></button>
+  <button class="nav-item" onclick="switchTab(3)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Heart</span></button>
+  <button class="nav-item" onclick="switchTab(4)"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></button>
+</nav>
 </div>
 
 <script>
-const screens = document.querySelectorAll('.screen');
-const navItems = document.querySelectorAll('.nav-item');
+const SS=document.querySelectorAll('.screen'),NN=document.querySelectorAll('.nav-item');
+function switchTab(i){SS.forEach(s=>s.classList.remove('active'));NN.forEach(n=>n.classList.remove('active'));SS[i].classList.add('active');NN[i].classList.add('active');SS[i].scrollTop=0;setTimeout(()=>drawAll(),80)}
+function heroSet(p,s,l,q,pct){document.querySelectorAll('.score-pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');document.getElementById('h-s').textContent=s;document.getElementById('h-l').textContent=l;document.getElementById('h-q').textContent=q;document.getElementById('h-arc').setAttribute('stroke-dasharray',`${Math.round(267*pct)} 267`)}
 
-function switchTab(index) {
-  screens.forEach(s => s.classList.remove('active'));
-  navItems.forEach(n => n.classList.remove('active'));
-  screens[index].classList.add('active');
-  navItems[index].classList.add('active');
-  screens[index].scrollTop = 0;
-  if (index === 1 || index === 3) {
-    setTimeout(() => {
-      if (index === 1) drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
-      if (index === 3) drawLineChart('hr-chart', dayHR, 45, 135);
-    }, 50);
-  }
+const now=new Date(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+document.getElementById('date-d').textContent=`${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+
+// Chart helper
+function drawLine(id,data,yMin,yMax,color){
+  const c=document.getElementById(id);if(!c)return;const ctx=c.getContext('2d'),dpr=devicePixelRatio||1,r=c.parentElement.getBoundingClientRect();
+  c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';ctx.scale(dpr,dpr);
+  const w=r.width,h=r.height,p={t:8,b:8};const pH=h-p.t-p.b;
+  const pts=data.map((v,i)=>({x:i/(data.length-1)*w,y:p.t+(1-(v-yMin)/(yMax-yMin))*pH}));
+  const gr=ctx.createLinearGradient(0,p.t,0,h);gr.addColorStop(0,color||'rgba(201,169,110,.22)');gr.addColorStop(.6,'rgba(201,169,110,.05)');gr.addColorStop(1,'rgba(201,169,110,0)');
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}
+  ctx.lineTo(pts[pts.length-1].x,h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+  // glow
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}ctx.strokeStyle='rgba(201,169,110,.25)';ctx.lineWidth=5;ctx.stroke();
+  // line
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}ctx.strokeStyle='#C9A96E';ctx.lineWidth=1.5;ctx.stroke();
+  // end dot
+  const ep=pts[pts.length-1];ctx.beginPath();ctx.arc(ep.x,ep.y,5,0,Math.PI*2);ctx.fillStyle='rgba(201,169,110,.12)';ctx.fill();
+  ctx.beginPath();ctx.arc(ep.x,ep.y,2.5,0,Math.PI*2);ctx.fillStyle='#C9A96E';ctx.fill();
 }
 
-// Hero score pill switcher
-function setHeroScore(pill, score, label, quality, pct) {
-  document.querySelectorAll('.score-pill').forEach(p => p.classList.remove('active'));
-  pill.classList.add('active');
-  document.getElementById('hero-score').textContent = score;
-  document.getElementById('hero-label').textContent = label;
-  document.getElementById('hero-quality').textContent = quality;
-  const arcLen = 283;
-  document.getElementById('hero-arc-progress').setAttribute('stroke-dasharray', `${Math.round(arcLen * pct)} ${arcLen}`);
+// Hypnogram
+function drawHypno(id){
+  const c=document.getElementById(id);if(!c)return;const ctx=c.getContext('2d'),dpr=devicePixelRatio||1,r=c.parentElement.getBoundingClientRect();
+  c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';ctx.scale(dpr,dpr);
+  const w=r.width,h=r.height;
+  // stages: 0=awake,1=rem,2=light,3=deep
+  const stages=[0,2,2,1,2,3,3,2,1,2,2,3,3,3,2,1,1,2,2,0,2,2,1,2,3,2,2,1,0,2,2,1,2,2,0,0];
+  const colors=['rgba(255,255,255,.15)','#C9A96E','rgba(201,169,110,.3)','#E8C46E'];
+  const stageH=[h*.1,h*.35,h*.6,h*.9];
+  const segW=w/stages.length;
+  stages.forEach((s,i)=>{
+    ctx.fillStyle=colors[s];
+    const y=stageH[s]-8;const bh=h-y;
+    ctx.fillRect(i*segW,y,segW-1,bh);
+    // highlight
+    const hg=ctx.createLinearGradient(0,y,0,y+bh*.4);hg.addColorStop(0,'rgba(255,255,255,.1)');hg.addColorStop(1,'transparent');
+    ctx.fillStyle=hg;ctx.fillRect(i*segW,y,segW-1,bh*.4);
+  });
+  // labels
+  ctx.fillStyle='rgba(255,255,255,.2)';ctx.font='500 8px DM Sans';ctx.textAlign='right';
+  ['Awake','REM','Light','Deep'].forEach((l,i)=>{ctx.fillText(l,w-4,stageH[i]-2)});
 }
 
-const now = new Date();
-const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
-
-function drawLineChart(canvasId, dataPoints, yMin, yMax) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = rect.height + 'px';
-  ctx.scale(dpr, dpr);
-
-  const w = rect.width;
-  const h = rect.height;
-  const pad = { top: 10, bottom: 10, left: 0, right: 0 };
-  const plotW = w - pad.left - pad.right;
-  const plotH = h - pad.top - pad.bottom;
-
-  const points = dataPoints.map((v, i) => ({
-    x: pad.left + (i / (dataPoints.length - 1)) * plotW,
-    y: pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH
-  }));
-
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0, pad.top, 0, h);
-  grad.addColorStop(0, 'rgba(201,169,110,0.25)');
-  grad.addColorStop(0.5, 'rgba(201,169,110,0.08)');
-  grad.addColorStop(1, 'rgba(201,169,110,0)');
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length; i++) {
-    const cx = (points[i-1].x + points[i].x) / 2;
-    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
-  }
-  const last = points[points.length-1];
-  ctx.lineTo(last.x, h);
-  ctx.lineTo(points[0].x, h);
-  ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Glow line
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length; i++) {
-    const cx = (points[i-1].x + points[i].x) / 2;
-    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
-  }
-  ctx.strokeStyle = 'rgba(201,169,110,0.3)';
-  ctx.lineWidth = 6;
-  ctx.stroke();
-
-  // Main line
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length; i++) {
-    const cx = (points[i-1].x + points[i].x) / 2;
-    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
-  }
-  ctx.strokeStyle = '#C9A96E';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // End dot with glow
-  const ep = points[points.length - 1];
-  ctx.beginPath();
-  ctx.arc(ep.x, ep.y, 6, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(201,169,110,0.15)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(ep.x, ep.y, 3, 0, Math.PI * 2);
-  ctx.fillStyle = '#C9A96E';
-  ctx.fill();
+// Bar charts
+function drawBars(id,data,active){
+  const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+  const mx=Math.max(...data);
+  data.forEach(v=>{
+    const b=document.createElement('div');b.className='bar';
+    const pct=mx>0?(v/mx)*100:0;b.style.height=Math.max(pct,4)+'%';
+    b.style.background=v>20?'linear-gradient(to top,#A8893E,#C9A96E,#E8D4A0)':v>0?'rgba(201,169,110,.25)':'rgba(255,255,255,.025)';
+    if(v>20)b.style.boxShadow='0 0 6px rgba(201,169,110,.15)';
+    el.appendChild(b);
+  });
 }
 
-const sleepHR = [68, 65, 62, 60, 58, 55, 53, 52, 52, 53, 54, 52, 51, 52, 54, 56, 58, 60, 62, 64, 65];
-const dayHR = [58, 56, 54, 52, 53, 55, 62, 68, 72, 78, 85, 92, 88, 76, 72, 80, 95, 124, 110, 88, 75, 68, 65, 62];
-const hourlyActivity = [0,0,0,0,0,0,10,25,40,15,8,5,30,45,20,10,5,60,80,35,15,8,0,0];
+// Data
+const sleepHR=[68,65,62,60,58,55,53,52,52,53,54,52,51,52,54,56,58,60,62,64,65];
+const sleepHRV=[35,38,42,45,48,52,55,58,60,55,50,58,62,65,60,52,48,42,38,35,32];
+const dayHR=[58,56,54,52,53,55,62,68,72,78,85,92,88,76,72,80,95,124,110,88,75,68,65,62];
+const dayHRV=[45,48,52,55,50,42,35,28,25,22,24,26,28,30,32,28,22,18,20,28,35,40,42,45];
+const rhr7=[61,60,60,59,59,58,58];
+const hourlyAct=[0,0,0,0,0,0,10,25,40,15,8,5,30,45,20,10,5,60,80,35,15,8,0,0];
+const sleepMove=[2,1,0,1,3,1,0,0,1,2,0,0,1,0,0,0,1,2,1,0,1,3,2,1,0,0,1,0,1,2,3,1,0,0,1,2];
 
-const barsContainer = document.getElementById('activity-bars');
-const maxActivity = Math.max(...hourlyActivity);
-hourlyActivity.forEach(v => {
-  const bar = document.createElement('div');
-  bar.className = 'bar';
-  const pct = maxActivity > 0 ? (v / maxActivity) * 100 : 0;
-  bar.style.height = Math.max(pct, 5) + '%';
-  bar.style.background = v > 20 ? 'linear-gradient(to top, #A8893E, #C9A96E, #E8D4A0)' : v > 0 ? 'rgba(201,169,110,0.3)' : 'rgba(255,255,255,0.03)';
-  bar.style.boxShadow = v > 20 ? '0 0 8px rgba(201,169,110,0.2)' : 'none';
-  barsContainer.appendChild(bar);
-});
+function drawAll(){
+  drawLine('c-shr',sleepHR,45,75);
+  drawLine('c-shrv',sleepHRV,25,70);
+  drawLine('c-hr24',dayHR,45,135);
+  drawLine('c-hrv24',dayHRV,10,60);
+  drawLine('c-rhr7',rhr7,55,63);
+  drawHypno('c-hypno');
+  drawBars('act-bars',hourlyAct);
+  drawBars('sleep-movement',sleepMove);
+}
+setTimeout(drawAll,120);
+window.addEventListener('resize',drawAll);
 
-setTimeout(() => {
-  drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
-  drawLineChart('hr-chart', dayHR, 45, 135);
-}, 100);
-
-window.addEventListener('resize', () => {
-  drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
-  drawLineChart('hr-chart', dayHR, 45, 135);
-});
+// Date tab clicks
+document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',function(){this.parentElement.querySelectorAll('.date-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
 </script>
-
 </body>
 </html>
