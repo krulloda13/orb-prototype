@@ -1039,6 +1039,65 @@ switchTab=function(i){
 
 setTimeout(runEntranceAnimations,200);
 
+// Sparkle/twinkle effect around hero arcs
+function spawnSparkles(arcWrapper){
+  if(!arcWrapper)return;
+  const cx=100,cy=110,r=85;
+  function createSparkle(){
+    const angle=Math.PI+Math.random()*Math.PI;
+    const spread=(Math.random()-.5)*16;
+    const x=cx+Math.cos(angle)*(r+spread);
+    const y=cy+Math.sin(angle)*(r+spread);
+    const isStar=Math.random()>.4;
+    const el=document.createElement('div');
+    el.className=isStar?'sparkle':'sparkle-dot';
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    const size=isStar?3+Math.random()*4:1.5+Math.random()*2;
+    el.style.width=size+'px';
+    el.style.height=size+'px';
+    const dur=600+Math.random()*900;
+    el.style.animation=`sparkle ${dur}ms ease-in-out forwards`;
+    arcWrapper.appendChild(el);
+    setTimeout(()=>el.remove(),dur);
+  }
+  let count=0;const max=20;
+  function burst(){
+    if(count>=max)return;
+    createSparkle();
+    count++;
+    setTimeout(burst,80+Math.random()*150);
+  }
+  burst();
+}
+
+function startArcSparkleLoop(screen){
+  const aw=screen.querySelector('.arc-w');
+  if(!aw)return;
+  aw.style.position='relative';
+  spawnSparkles(aw);
+  const iv=setInterval(()=>{
+    if(!screen.classList.contains('active')){clearInterval(iv);return}
+    spawnSparkles(aw);
+  },3500);
+  return iv;
+}
+
+let sparkleInterval=null;
+function initSparkles(){
+  const active=document.querySelector('.screen.active');
+  if(active)sparkleInterval=startArcSparkleLoop(active);
+}
+
+const origSwitchTab2=switchTab;
+switchTab=function(i){
+  if(sparkleInterval)clearInterval(sparkleInterval);
+  origSwitchTab2(i);
+  setTimeout(()=>{sparkleInterval=startArcSparkleLoop(SS[i])},600);
+};
+
+setTimeout(initSparkles,800);
+
 document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',function(){this.parentElement.querySelectorAll('.date-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
 </script>
 </body>
