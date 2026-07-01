@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Orb</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0A0A0C;
+  --bg-card: rgba(255,255,255,0.04);
+  --border-card: rgba(255,255,255,0.06);
+  --bg-elevated: #111113;
+  --accent: #C9A96E;
+  --accent-dim: rgba(201,169,110,0.35);
+  --accent-glow: rgba(201,169,110,0.15);
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255,255,255,0.4);
+  --text-tertiary: rgba(255,255,255,0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.app {
+  max-width: 390px;
+  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === SCREENS === */
+.screens {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 20px 100px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  -webkit-overflow-scrolling: touch;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* === NAV === */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-card);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item svg { width: 22px; height: 22px; fill: none; stroke: var(--text-tertiary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s; }
+.nav-item span { font-size: 10px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; }
+.nav-item.active svg { stroke: var(--accent); }
+.nav-item.active span { color: var(--accent); }
+
+/* === SHARED === */
+.greeting { font-weight: 300; font-size: 26px; letter-spacing: -0.5px; line-height: 1.2; }
+.date-sub { font-weight: 500; font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.section-title { font-weight: 500; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; margin-top: 24px; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.stat-value { font-weight: 300; font-size: 22px; letter-spacing: -0.5px; }
+.stat-label { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+/* === RING === */
+.ring-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 24px 0 20px;
+}
+.ring-wrap { position: relative; }
+.ring-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.ring-score { font-weight: 300; font-size: 48px; letter-spacing: -1px; display: block; }
+.ring-label { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; }
+
+/* === HOME GRID === */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.stat-card:active { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+.stat-card .icon { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.stat-card .icon svg { width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.stat-card .icon span { font-weight: 500; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+/* === SLEEP STAGES === */
+.stages-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  gap: 2px;
+}
+.stage { transition: flex 0.4s ease; }
+.stages-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* === STATS ROW === */
+.stats-row {
+  display: flex;
+  gap: 0;
+}
+.stats-row .stat-col {
+  flex: 1;
+  text-align: center;
+  padding: 14px 0;
+}
+.stats-row .stat-col + .stat-col { border-left: 1px solid var(--border-card); }
+.stats-row .stat-col .val { font-weight: 300; font-size: 18px; letter-spacing: -0.5px; }
+.stats-row .stat-col .lbl { font-weight: 500; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+/* === CHARTS === */
+.chart-container {
+  position: relative;
+  height: 140px;
+  margin-top: 8px;
+}
+.chart-container canvas {
+  width: 100%;
+  height: 100%;
+}
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+}
+
+/* === ACTIVITY BARS === */
+.bars-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 100px;
+  margin-top: 8px;
+}
+.bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: height 0.4s ease;
+}
+
+/* === HEART PULSE === */
+.pulse-bpm {
+  font-weight: 300;
+  font-size: 64px;
+  letter-spacing: -2px;
+  text-align: center;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.pulse-unit { font-weight: 400; font-size: 16px; color: var(--text-secondary); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.hr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin: 12px auto 0;
+  text-align: center;
+}
+.hr-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* === PROFILE === */
+.device-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.device-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.device-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+.device-info { flex: 1; }
+.device-name { font-weight: 400; font-size: 15px; }
+.device-status { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; }
+.device-battery { font-weight: 500; font-size: 13px; color: var(--accent); }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-card);
+}
+.info-row:last-child { border-bottom: none; }
+.info-key { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
+.info-val { font-weight: 400; font-size: 14px; }
+
+.goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-card);
+}
+.goal-row:last-child { border-bottom: none; }
+.goal-label { font-weight: 400; font-size: 14px; color: var(--text-secondary); }
+.goal-value {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.wordmark {
+  text-align: center;
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--text-tertiary);
+  letter-spacing: 4px;
+  margin-top: 32px;
+  padding-bottom: 20px;
+}
+
+/* 3-col stat row */
+.stat-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.stat-3col .card { text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="screens">
+
+    <!-- ===== HOME ===== -->
+    <div class="screen active" id="screen-home">
+      <div class="greeting">Good morning,<br>Kris</div>
+      <div class="date-sub" id="date-display"></div>
+
+      <div class="ring-container">
+        <div class="ring-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
+              stroke-dasharray="361 440" stroke-linecap="round" transform="rotate(-90 80 80)"
+              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
+            <circle cx="80" cy="80" r="58" fill="none" stroke="var(--border-card)" stroke-width="4"/>
+            <circle cx="80" cy="80" r="58" fill="none" stroke="var(--accent-dim)" stroke-width="4"
+              stroke-dasharray="270 364" stroke-linecap="round" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-score">82</span>
+          </div>
+        </div>
+        <div class="ring-label">Readiness</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card" onclick="switchTab(1)">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span>Sleep</span>
+          </div>
+          <div class="stat-value">7h 24m</div>
+        </div>
+        <div class="stat-card" onclick="switchTab(3)">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Heart Rate</span>
+          </div>
+          <div class="stat-value">62 <span style="font-size:14px;color:var(--text-secondary)">bpm</span></div>
+        </div>
+        <div class="stat-card" onclick="switchTab(2)">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span>Steps</span>
+          </div>
+          <div class="stat-value">8,240</div>
+        </div>
+        <div class="stat-card" onclick="switchTab(2)">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M12 12c-2 -3 -6 -5 -6 -8a6 6 0 0 1 12 0c0 3 -4 5 -6 8z" transform="rotate(180 12 12)"/></svg>
+            <span>Calories</span>
+          </div>
+          <div class="stat-value">420 <span style="font-size:14px;color:var(--text-secondary)">kcal</span></div>
+        </div>
+      </div>
+
+      <div class="wordmark">orb</div>
+    </div>
+
+    <!-- ===== SLEEP ===== -->
+    <div class="screen" id="screen-sleep">
+      <div class="greeting">Sleep</div>
+      <div class="date-sub">Last night</div>
+
+      <div class="ring-container">
+        <div class="ring-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
+              stroke-dasharray="374 440" stroke-linecap="round" transform="rotate(-90 80 80)"
+              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-score">85</span>
+          </div>
+        </div>
+        <div class="ring-label">Sleep Score</div>
+      </div>
+
+      <div class="section-title">Sleep Stages</div>
+      <div class="card">
+        <div class="stages-bar">
+          <div class="stage" style="flex:23;background:rgba(255,255,255,0.2);"></div>
+          <div class="stage" style="flex:108;background:var(--accent);"></div>
+          <div class="stage" style="flex:222;background:var(--accent-dim);"></div>
+          <div class="stage" style="flex:91;background:#E8C46E;"></div>
+        </div>
+        <div class="stages-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.2)"></div>Awake 23m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>REM 1h 48m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-dim)"></div>Light 3h 42m</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#E8C46E"></div>Deep 1h 31m</div>
+        </div>
+      </div>
+
+      <div class="section-title">Summary</div>
+      <div class="card">
+        <div class="stats-row">
+          <div class="stat-col"><div class="val">7h 52m</div><div class="lbl">In bed</div></div>
+          <div class="stat-col"><div class="val">7h 24m</div><div class="lbl">Asleep</div></div>
+          <div class="stat-col"><div class="val">94%</div><div class="lbl">Efficiency</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">Nightly Heart Rate</div>
+      <div class="card">
+        <div class="chart-container"><canvas id="sleep-hr-chart"></canvas></div>
+        <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITY ===== -->
+    <div class="screen" id="screen-activity">
+      <div class="greeting">Activity</div>
+      <div class="date-sub">Today</div>
+
+      <div class="ring-container">
+        <div class="ring-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-card)" stroke-width="5"/>
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="5"
+              stroke-dasharray="370 440" stroke-linecap="round" transform="rotate(-90 80 80)"
+              style="filter: drop-shadow(0 0 8px var(--accent-glow));"/>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-score" style="font-size:36px;">420</span>
+            <span style="font-size:11px;font-weight:500;color:var(--text-secondary);display:block;margin-top:-2px;">/ 500 kcal</span>
+          </div>
+        </div>
+        <div class="ring-label">Move Goal</div>
+      </div>
+
+      <div class="stat-3col">
+        <div class="card">
+          <div class="stat-value" style="font-size:20px;">8,240</div>
+          <div class="stat-label">Steps</div>
+        </div>
+        <div class="card">
+          <div class="stat-value" style="font-size:20px;">420</div>
+          <div class="stat-label">Calories</div>
+        </div>
+        <div class="card">
+          <div class="stat-value" style="font-size:20px;">42m</div>
+          <div class="stat-label">Active</div>
+        </div>
+      </div>
+
+      <div class="section-title">Hourly Activity</div>
+      <div class="card">
+        <div class="bars-container" id="activity-bars"></div>
+        <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+      </div>
+    </div>
+
+    <!-- ===== HEART RATE ===== -->
+    <div class="screen" id="screen-heart">
+      <div class="greeting">Heart Rate</div>
+      <div class="date-sub">Today</div>
+
+      <div style="text-align:center;margin:32px 0 0;">
+        <div class="pulse-bpm">62 <span class="pulse-unit">bpm</span></div>
+        <div style="display:flex;justify-content:center;">
+          <div class="hr-badge"><div class="hr-badge-dot"></div>Resting: 58 bpm</div>
+        </div>
+      </div>
+
+      <div class="section-title">24-Hour Trend</div>
+      <div class="card">
+        <div class="chart-container"><canvas id="hr-chart"></canvas></div>
+        <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+      </div>
+
+      <div class="section-title">Daily Stats</div>
+      <div class="card">
+        <div class="stats-row">
+          <div class="stat-col"><div class="val">52</div><div class="lbl">Min</div></div>
+          <div class="stat-col"><div class="val">68</div><div class="lbl">Avg</div></div>
+          <div class="stat-col"><div class="val">124</div><div class="lbl">Max</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE ===== -->
+    <div class="screen" id="screen-profile">
+      <div class="greeting">Profile</div>
+      <div class="date-sub">Settings & device</div>
+
+      <div class="section-title">Device</div>
+      <div class="card">
+        <div class="device-card">
+          <div class="device-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+          </div>
+          <div class="device-info">
+            <div class="device-name">Orb Bracelet</div>
+            <div class="device-status"><div class="status-dot"></div>Connected · Synced just now</div>
+          </div>
+          <div class="device-battery">82%</div>
+        </div>
+      </div>
+
+      <div class="section-title">Personal Info</div>
+      <div class="card">
+        <div class="info-row"><span class="info-key">Name</span><span class="info-val">Kris</span></div>
+        <div class="info-row"><span class="info-key">Age</span><span class="info-val">28</span></div>
+        <div class="info-row"><span class="info-key">Weight</span><span class="info-val">165 lbs</span></div>
+        <div class="info-row"><span class="info-key">Height</span><span class="info-val">5'10"</span></div>
+      </div>
+
+      <div class="section-title">Goals</div>
+      <div class="card">
+        <div class="goal-row"><span class="goal-label">Daily Steps</span><span class="goal-value">10,000</span></div>
+        <div class="goal-row"><span class="goal-label">Sleep</span><span class="goal-value">8h</span></div>
+        <div class="goal-row"><span class="goal-label">Calories</span><span class="goal-value">500 kcal</span></div>
+      </div>
+
+      <div class="wordmark">orb</div>
+    </div>
+
+  </div>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="nav">
+    <button class="nav-item active" onclick="switchTab(0)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="switchTab(1)">
+      <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span>Sleep</span>
+    </button>
+    <button class="nav-item" onclick="switchTab(2)">
+      <svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0 0 16 0c0-5-4-8-8-12z"/></svg>
+      <span>Activity</span>
+    </button>
+    <button class="nav-item" onclick="switchTab(3)">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>Heart</span>
+    </button>
+    <button class="nav-item" onclick="switchTab(4)">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+const screens = document.querySelectorAll('.screen');
+const navItems = document.querySelectorAll('.nav-item');
+
+function switchTab(index) {
+  screens.forEach(s => s.classList.remove('active'));
+  navItems.forEach(n => n.classList.remove('active'));
+  screens[index].classList.add('active');
+  navItems[index].classList.add('active');
+  screens[index].scrollTop = 0;
+}
+
+// Date display
+const now = new Date();
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('date-display').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+
+// Draw line chart
+function drawLineChart(canvasId, dataPoints, yMin, yMax) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const pad = { top: 10, bottom: 10, left: 0, right: 0 };
+  const plotW = w - pad.left - pad.right;
+  const plotH = h - pad.top - pad.bottom;
+
+  const points = dataPoints.map((v, i) => ({
+    x: pad.left + (i / (dataPoints.length - 1)) * plotW,
+    y: pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH
+  }));
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, h);
+  grad.addColorStop(0, 'rgba(201,169,110,0.2)');
+  grad.addColorStop(1, 'rgba(201,169,110,0)');
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const cx = (points[i-1].x + points[i].x) / 2;
+    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
+  }
+  const last = points[points.length-1];
+  ctx.lineTo(last.x, h);
+  ctx.lineTo(points[0].x, h);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const cx = (points[i-1].x + points[i].x) / 2;
+    ctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
+  }
+  ctx.strokeStyle = '#C9A96E';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// Sleep HR data (10pm to 6am, dips during deep sleep ~2-4am)
+const sleepHR = [68, 65, 62, 60, 58, 55, 53, 52, 52, 53, 54, 52, 51, 52, 54, 56, 58, 60, 62, 64, 65];
+
+// 24h HR data (12am to now)
+const dayHR = [58, 56, 54, 52, 53, 55, 62, 68, 72, 78, 85, 92, 88, 76, 72, 80, 95, 124, 110, 88, 75, 68, 65, 62];
+
+// Activity hourly data
+const hourlyActivity = [0,0,0,0,0,0,10,25,40,15,8,5,30,45,20,10,5,60,80,35,15,8,0,0];
+
+// Render activity bars
+const barsContainer = document.getElementById('activity-bars');
+const maxActivity = Math.max(...hourlyActivity);
+hourlyActivity.forEach(v => {
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  const pct = maxActivity > 0 ? (v / maxActivity) * 100 : 0;
+  bar.style.height = Math.max(pct, 5) + '%';
+  bar.style.background = v > 0 ? 'var(--accent)' : 'var(--border-card)';
+  bar.style.opacity = v > 20 ? 1 : v > 0 ? 0.5 : 0.2;
+  barsContainer.appendChild(bar);
+});
+
+// Draw charts after layout
+setTimeout(() => {
+  drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
+  drawLineChart('hr-chart', dayHR, 45, 135);
+}, 100);
+
+window.addEventListener('resize', () => {
+  drawLineChart('sleep-hr-chart', sleepHR, 45, 75);
+  drawLineChart('hr-chart', dayHR, 45, 135);
+});
+</script>
+
+</body>
+</html>
