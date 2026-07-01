@@ -22,15 +22,12 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 
-/* APP SHELL */
 .app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg)}
-
 .screens{flex:1;position:relative;overflow:hidden;z-index:1}
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:16px 20px 100px;opacity:0;transform:translateY(10px);transition:opacity 0.35s,transform 0.35s cubic-bezier(.23,1,.32,1);pointer-events:none;-webkit-overflow-scrolling:touch}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{opacity:1;transform:translateY(0);pointer-events:auto}
 
-/* NAV */
 .nav{display:flex;justify-content:space-around;align-items:center;padding:6px 0 calc(6px + env(safe-area-inset-bottom));background:rgba(17,17,19,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.04);flex-shrink:0;z-index:10}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 14px;border:none;background:none;-webkit-tap-highlight-color:transparent;transition:transform .15s}
 .nav-item:active{transform:scale(.88)}
@@ -39,7 +36,6 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .nav-item.active svg{stroke:var(--accent);filter:drop-shadow(0 0 5px rgba(201,169,110,.35))}
 .nav-item.active span{color:var(--accent)}
 
-/* SHARED */
 .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
 .top-bar .logo{font-weight:300;font-size:18px;letter-spacing:3px;color:var(--t2)}
 .top-bar .date{font-weight:500;font-size:11px;color:var(--t3)}
@@ -78,6 +74,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .ed-text{font-weight:400;font-size:13px;color:var(--t2);line-height:1.6}
 .btn{display:inline-block;margin-top:12px;padding:9px 22px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);border-radius:22px;font-family:inherit;font-weight:500;font-size:12px;color:var(--t1);cursor:pointer;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(10px);box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.04);transition:transform .15s}
 .btn:active{transform:scale(.96)}
+.btn-accent{background:linear-gradient(135deg,rgba(201,169,110,.2),rgba(201,169,110,.08));border-color:rgba(201,169,110,.15);color:var(--accent)}
 
 /* CONTRIBUTOR BARS */
 .contrib-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)}
@@ -88,15 +85,56 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .contrib-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.15),transparent);border-radius:3px 3px 0 0}
 .contrib-val{font-weight:500;font-size:11px;color:var(--t2);width:36px;text-align:right;flex-shrink:0}
 
-/* SPOTLIGHT */
-.spotlight{margin-top:16px;border-radius:22px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 28px rgba(0,0,0,.3);transition:transform .25s}
-.spotlight:active{transform:scale(.98)}
-.spot-bg{height:140px;position:relative}
-.spot-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(transparent,rgba(10,10,12,.9))}
-.spot-content{position:absolute;bottom:0;left:0;right:0;padding:14px 18px;z-index:1}
-.spot-lbl{font-weight:500;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
-.spot-title{font-weight:300;font-size:15px;line-height:1.3}
-.spot-arrow{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:13px;z-index:2}
+/* INSIGHT CARD — Apple Health storytelling style */
+.insight{border-radius:22px;overflow:hidden;position:relative;cursor:pointer;box-shadow:0 6px 28px rgba(0,0,0,.3);transition:transform .25s;margin-top:14px}
+.insight:active{transform:scale(.98)}
+.insight-hero{height:130px;position:relative;overflow:hidden}
+.insight-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,rgba(10,10,12,.95))}
+.insight-body{padding:16px 18px 18px;position:relative}
+.insight-cat{font-weight:600;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.insight-cat svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:1.5}
+.insight-h{font-weight:400;font-size:17px;line-height:1.35;margin-bottom:6px}
+.insight-p{font-weight:400;font-size:12.5px;color:var(--t2);line-height:1.55}
+.insight-arrow{position:absolute;top:12px;right:14px;font-size:16px;color:var(--t2);z-index:2}
+
+/* HIGHLIGHT — data-backed story card */
+.highlight{margin-top:14px;cursor:pointer;transition:transform .2s}
+.highlight:active{transform:scale(.98)}
+.hl-cat{font-weight:600;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.hl-cat svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:1.5}
+.hl-arrow{float:right;font-size:14px;color:var(--t3);margin-top:2px}
+.hl-h{font-weight:400;font-size:14px;color:var(--t2);line-height:1.5;margin-bottom:12px}
+.hl-sep{height:1px;background:rgba(255,255,255,.04);margin:12px 0}
+.hl-data{display:flex;gap:16px;align-items:flex-end}
+.hl-big{font-weight:200;font-size:36px;letter-spacing:-1px;line-height:1}
+.hl-unit{font-weight:400;font-size:13px;color:var(--t2);margin-left:3px}
+.hl-bar-wrap{flex:1}
+.hl-bar-label{font-size:10px;color:var(--t2);margin-bottom:4px}
+.hl-bar{height:22px;border-radius:5px;position:relative;overflow:hidden}
+.hl-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.12),transparent)}
+.hl-compare{display:flex;gap:16px;margin-top:12px;align-items:center}
+.hl-yr{font-weight:400;font-size:11px;color:var(--t3);width:36px}
+.hl-yr-bar{flex:1;height:16px;border-radius:4px;position:relative;overflow:hidden}
+.hl-yr-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.12),transparent)}
+.hl-yr-val{font-weight:400;font-size:12px;width:60px;text-align:right}
+
+/* DISCOVERY CARD */
+.discovery{display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:transform .2s}
+.discovery:active{transform:scale(.98)}
+.disc-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.disc-icon svg{width:20px;height:20px;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.disc-body{flex:1}
+.disc-h{font-weight:500;font-size:14px;margin-bottom:3px}
+.disc-p{font-weight:400;font-size:12px;color:var(--t2);line-height:1.45}
+.disc-btn{display:inline-block;margin-top:10px;padding:7px 18px;border-radius:18px;font-family:inherit;font-weight:600;font-size:11px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.disc-close{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t3);cursor:pointer}
+
+/* SHOW ALL ROW */
+.show-all{display:flex;align-items:center;gap:8px;padding:14px 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.show-all:active{opacity:.6}
+.show-all svg{width:16px;height:16px;stroke:var(--t3);fill:none;stroke-width:1.5}
+.show-all span{font-weight:400;font-size:13px;color:var(--t2);flex:1}
+.show-all .arr{font-size:14px;color:var(--t3)}
 
 /* STATS ROW */
 .stats-row{display:flex}
@@ -161,12 +199,10 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .dev-status{font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;margin-top:1px}
 .status-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.35)}
 .dev-batt{font-weight:500;font-size:12px;color:var(--accent)}
-
 .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .info-row:last-child{border-bottom:none}
 .ik{font-weight:400;font-size:13px;color:var(--t2)}
 .iv{font-weight:400;font-size:13px}
-
 .goal-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .goal-row:last-child{border-bottom:none}
 .gl{font-weight:400;font-size:13px;color:var(--t2)}
@@ -179,15 +215,19 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 
 .wordmark{text-align:center;font-weight:300;font-size:14px;color:var(--t3);letter-spacing:3px;margin-top:24px;padding-bottom:16px}
 
-/* SVG classes */
 .ring-track{fill:none;stroke:rgba(255,255,255,.04)}
 .ring-prog{fill:none;stroke:url(#gG);stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(201,169,110,.3))}
+
+/* WEEKLY BARS */
+.week-bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin:8px 0 4px}
+.wbar{flex:1;border-radius:4px 4px 0 0;min-height:3px;position:relative;overflow:hidden}
+.wbar::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.15),transparent)}
+.wbar-labels{display:flex;justify-content:space-around;font-size:9px;font-weight:500;color:var(--t3)}
 </style>
 </head>
 <body>
 <svg style="position:absolute;width:0;height:0"><defs>
 <linearGradient id="gG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8D4A0"/><stop offset="50%" stop-color="#C9A96E"/><stop offset="100%" stop-color="#A8893E"/></linearGradient>
-<linearGradient id="gD" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(201,169,110,.45)"/><stop offset="100%" stop-color="rgba(168,137,62,.25)"/></linearGradient>
 </defs></svg>
 
 <div class="app">
@@ -198,25 +238,21 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   <div class="top-bar"><div class="logo">orb</div><div class="date" id="date-d"></div></div>
 
   <div class="score-pills">
-    <div class="score-pill active" onclick="heroSet(this,82,'Readiness','Good',.82,'readiness')">
+    <div class="score-pill active" onclick="heroSet(this,82,'Readiness','Good',.82)">
       <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="103 126" transform="rotate(-90 24 24)"/></svg><span class="ps">82</span></div>
       <span class="sp-label">Readiness</span>
     </div>
-    <div class="score-pill" onclick="heroSet(this,85,'Sleep','Optimal',.85,'sleep')">
+    <div class="score-pill" onclick="heroSet(this,85,'Sleep','Optimal',.85)">
       <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="107 126" transform="rotate(-90 24 24)"/></svg><span class="ps">85</span></div>
       <span class="sp-label">Sleep</span>
     </div>
-    <div class="score-pill" onclick="heroSet(this,84,'Activity','On track',.84,'activity')">
+    <div class="score-pill" onclick="heroSet(this,84,'Activity','On track',.84)">
       <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="106 126" transform="rotate(-90 24 24)"/></svg><span class="ps">84</span></div>
       <span class="sp-label">Activity</span>
     </div>
-    <div class="score-pill" onclick="heroSet(this,62,'Heart Rate','62 bpm',.5,'heart')">
+    <div class="score-pill" onclick="heroSet(this,62,'Heart Rate','62 bpm',.5)">
       <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="63 126" transform="rotate(-90 24 24)"/></svg><span class="ps">62</span></div>
       <span class="sp-label">Heart</span>
-    </div>
-    <div class="score-pill" onclick="heroSet(this,36,'Cycle Day','Day 15',.5,'cycle')">
-      <div class="pill-wrap"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="ring-track" stroke-width="3"/><circle cx="24" cy="24" r="20" class="ring-prog" stroke-width="3" stroke-dasharray="63 126" transform="rotate(-90 24 24)"/></svg><span class="ps">15</span></div>
-      <span class="sp-label">Cycle</span>
     </div>
   </div>
 
@@ -241,16 +277,122 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     <button class="btn" onclick="switchTab(1)">Learn more</button>
   </div>
 
-  <!-- Contributors -->
-  <div class="section-title">Contributors</div>
-  <div class="card" id="home-contribs">
-    <div class="contrib-row"><span class="contrib-label">Previous night</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:92%"></div></div><span class="contrib-val">92</span></div>
-    <div class="contrib-row"><span class="contrib-label">Sleep balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:85%"></div></div><span class="contrib-val">85</span></div>
-    <div class="contrib-row"><span class="contrib-label">HRV balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
-    <div class="contrib-row"><span class="contrib-label">Resting HR</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:90%"></div></div><span class="contrib-val">90</span></div>
-    <div class="contrib-row"><span class="contrib-label">Body temp</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:82%"></div></div><span class="contrib-val">82</span></div>
-    <div class="contrib-row"><span class="contrib-label">Recovery index</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:78%"></div></div><span class="contrib-val">78</span></div>
-    <div class="contrib-row"><span class="contrib-label">Activity balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:80%"></div></div><span class="contrib-val">80</span></div>
+  <!-- HIGHLIGHTS — Apple Health storytelling -->
+  <div class="section-title">Highlights</div>
+
+  <!-- Walking + Steps highlight -->
+  <div class="card highlight" onclick="switchTab(2)">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0016 0c0-5-4-8-8-12z"/></svg>Steps<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Over the last 7 days, your daily step count averaged 8,450 steps a day.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-data">
+      <div><div class="hl-big">8,450<span class="hl-unit">avg</span></div></div>
+      <div class="hl-bar-wrap">
+        <div class="week-bars" id="step-week-bars"></div>
+        <div class="wbar-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resting HR highlight — year comparison -->
+  <div class="card highlight" onclick="switchTab(3)">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Resting Heart Rate<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Your resting heart rate is lower this year than last year.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-compare">
+      <span class="hl-yr">2026</span>
+      <div class="hl-yr-bar" style="width:55%;background:linear-gradient(90deg,#A8893E,var(--accent))"></div>
+      <span class="hl-yr-val">58 bpm</span>
+    </div>
+    <div class="hl-compare" style="margin-top:6px">
+      <span class="hl-yr">2025</span>
+      <div class="hl-yr-bar" style="width:68%;background:rgba(255,255,255,.1)"></div>
+      <span class="hl-yr-val" style="color:var(--t2)">64 bpm</span>
+    </div>
+  </div>
+
+  <!-- Sleep highlight -->
+  <div class="card highlight" onclick="switchTab(1)">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Sleep Duration<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Your average sleep this week is 7h 24m — 15 minutes more than your 30-day average.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-data">
+      <div><div class="hl-big">7:24<span class="hl-unit">avg</span></div></div>
+      <div class="hl-bar-wrap">
+        <div class="week-bars" id="sleep-week-bars"></div>
+        <div class="wbar-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Show All Highlights -->
+  <div class="card" style="padding:0">
+    <div class="show-all" style="padding:14px 16px">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Show All Highlights</span>
+      <span class="arr">&#8250;</span>
+    </div>
+  </div>
+
+  <!-- GET MORE FROM ORB — feature discovery -->
+  <div class="section-title">Get More From Orb</div>
+
+  <div class="card" style="position:relative">
+    <div class="disc-close">&#10005;</div>
+    <div class="discovery">
+      <div class="disc-icon" style="background:radial-gradient(circle at 40% 40%,rgba(201,169,110,.2),rgba(201,169,110,.05));border:1px solid rgba(201,169,110,.08)">
+        <svg viewBox="0 0 24 24" stroke="var(--accent)" fill="none"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="disc-body">
+        <div class="disc-h">Track Your Stress</div>
+        <div class="disc-p">Orb can measure your stress levels throughout the day using HRV patterns. See when you're calm and when your body needs a break.</div>
+        <button class="disc-btn" style="background:linear-gradient(135deg,rgba(201,169,110,.2),rgba(201,169,110,.08));color:var(--accent)">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="position:relative">
+    <div class="disc-close">&#10005;</div>
+    <div class="discovery">
+      <div class="disc-icon" style="background:radial-gradient(circle at 40% 40%,rgba(74,222,128,.15),rgba(74,222,128,.03));border:1px solid rgba(74,222,128,.08)">
+        <svg viewBox="0 0 24 24" stroke="var(--green)" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="disc-body">
+        <div class="disc-h">Blood Oxygen Monitoring</div>
+        <div class="disc-p">Orb continuously tracks your SpO2 levels during sleep to detect breathing disturbances and help you understand your respiratory health.</div>
+        <button class="disc-btn" style="background:rgba(74,222,128,.1);color:var(--green)">Enable</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight article card -->
+  <div class="section-title">Explore</div>
+
+  <div class="insight" onclick="switchTab(1)">
+    <div class="insight-hero" style="background:linear-gradient(135deg,#1a1a2e,#16213e 40%,#0f3460)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 60% 20%,rgba(201,169,110,.12),transparent 50%),radial-gradient(circle at 20% 80%,rgba(100,120,180,.08),transparent 40%)"></div>
+      <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%)">
+        <svg width="60" height="60" viewBox="0 0 60 60" opacity=".15"><path d="M30 5C18 5 5 18 5 30s13 25 25 25 25-13 25-25S42 5 30 5zm0 40c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15z" fill="#C9A96E"/></svg>
+      </div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-cat"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Sleep</div>
+      <div class="insight-h">What Your Sleep Stages Say About Recovery</div>
+      <div class="insight-p">Understanding the balance between REM, deep, and light sleep can help you optimize when you go to bed and how you wind down.</div>
+    </div>
+    <div class="insight-arrow">&#8250;</div>
+  </div>
+
+  <div class="insight" onclick="switchTab(3)">
+    <div class="insight-hero" style="background:linear-gradient(135deg,#1a0a0a,#2d1515 40%,#3d1a1a)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(201,169,110,.1),transparent 50%)"></div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-cat"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Heart</div>
+      <div class="insight-h">Why Your Resting Heart Rate Matters More Than You Think</div>
+      <div class="insight-p">A lower resting heart rate generally means better cardiovascular fitness. Learn what influences it and how to improve yours.</div>
+    </div>
+    <div class="insight-arrow">&#8250;</div>
   </div>
 
   <!-- Body Metrics -->
@@ -263,13 +405,16 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     </div>
   </div>
 
-  <!-- Spotlight -->
-  <div class="spotlight" onclick="switchTab(2)">
-    <div class="spot-bg" style="background:linear-gradient(135deg,#1a1a2e,#16213e 40%,#0f3460)">
-      <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(201,169,110,.1),transparent 50%),radial-gradient(circle at 30% 80%,rgba(100,120,180,.06),transparent 40%)"></div>
-    </div>
-    <div class="spot-content"><div class="spot-lbl">Activity goal</div><div class="spot-title">420 / 500 kcal — 84% complete</div></div>
-    <div class="spot-arrow">&#8250;</div>
+  <!-- Contributors -->
+  <div class="section-title">Contributors</div>
+  <div class="card" id="home-contribs">
+    <div class="contrib-row"><span class="contrib-label">Previous night</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:92%"></div></div><span class="contrib-val">92</span></div>
+    <div class="contrib-row"><span class="contrib-label">Sleep balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:85%"></div></div><span class="contrib-val">85</span></div>
+    <div class="contrib-row"><span class="contrib-label">HRV balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
+    <div class="contrib-row"><span class="contrib-label">Resting HR</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:90%"></div></div><span class="contrib-val">90</span></div>
+    <div class="contrib-row"><span class="contrib-label">Body temp</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:82%"></div></div><span class="contrib-val">82</span></div>
+    <div class="contrib-row"><span class="contrib-label">Recovery index</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:78%"></div></div><span class="contrib-val">78</span></div>
+    <div class="contrib-row"><span class="contrib-label">Activity balance</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:80%"></div></div><span class="contrib-val">80</span></div>
   </div>
 
   <!-- Weekly Trends -->
@@ -302,6 +447,12 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
       </div>
       <div class="hero-lbl">Sleep Score</div>
     </div>
+  </div>
+
+  <!-- Sleep insight -->
+  <div class="editorial">
+    <div class="ed-title">A great night</div>
+    <div class="ed-text">You spent 20% of your night in deep sleep — that's above your 30-day average of 17%. Deep sleep is when your body repairs tissue, builds bone and muscle, and strengthens the immune system.</div>
   </div>
 
   <!-- Sleep Timeline (Hypnogram) -->
@@ -338,6 +489,23 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     </div>
   </div>
 
+  <!-- Sleep highlight — storytelling -->
+  <div class="card highlight">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Sleep Efficiency<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Your sleep efficiency this week has been consistently above 90%, which means you're falling asleep quickly and staying asleep through the night.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-compare">
+      <span class="hl-yr">This wk</span>
+      <div class="hl-yr-bar" style="width:92%;background:linear-gradient(90deg,#A8893E,var(--accent))"></div>
+      <span class="hl-yr-val">93%</span>
+    </div>
+    <div class="hl-compare" style="margin-top:6px">
+      <span class="hl-yr">Last wk</span>
+      <div class="hl-yr-bar" style="width:82%;background:rgba(255,255,255,.1)"></div>
+      <span class="hl-yr-val" style="color:var(--t2)">87%</span>
+    </div>
+  </div>
+
   <!-- Contributors -->
   <div class="section-title">Contributors</div>
   <div class="card">
@@ -355,6 +523,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   <div class="card">
     <div class="chart-box"><canvas id="c-shr"></canvas></div>
     <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+    <div class="hl-sep"></div>
+    <div class="hl-h" style="font-size:12px">Your heart rate reached its lowest point at 3am — 51 bpm — during deep sleep. A lower nocturnal nadir indicates strong recovery.</div>
   </div>
 
   <!-- Nightly HRV -->
@@ -369,6 +539,21 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   <div class="card">
     <div class="bars-box" id="sleep-movement"></div>
     <div class="chart-labels"><span>10pm</span><span>12am</span><span>2am</span><span>4am</span><span>6am</span></div>
+    <div class="hl-sep"></div>
+    <div class="hl-h" style="font-size:12px">You had minimal restlessness between 1am–4am, which aligns with your deepest sleep cycles. Low nighttime movement is a positive sign.</div>
+  </div>
+
+  <!-- Explore article -->
+  <div class="insight">
+    <div class="insight-hero" style="background:linear-gradient(135deg,#0d1b2a,#1b2838 50%,#243447)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(201,169,110,.08),transparent 60%)"></div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-cat"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Learn</div>
+      <div class="insight-h">How Breathing Disturbances Impact Your Sleep</div>
+      <div class="insight-p">Subtle changes in your breathing pattern during sleep can affect how rested you feel. Learn what Orb looks for and when to pay attention.</div>
+    </div>
+    <div class="insight-arrow">&#8250;</div>
   </div>
 
   <div class="wordmark">orb</div>
@@ -395,8 +580,14 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     </div>
   </div>
 
+  <!-- Activity insight -->
+  <div class="editorial">
+    <div class="ed-title">Staying consistent</div>
+    <div class="ed-text">You've closed your move goal 5 of the last 7 days. Your most active time this week has been between 5pm–7pm. An evening walk today could help you close the ring.</div>
+  </div>
+
   <!-- Stats -->
-  <div class="card" style="margin-top:4px">
+  <div class="card" style="margin-top:14px">
     <div class="stats-row">
       <div class="stat-col"><div class="v">8,240</div><div class="l">Steps</div></div>
       <div class="stat-col"><div class="v">420</div><div class="l">Calories</div></div>
@@ -411,6 +602,23 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
   </div>
 
+  <!-- Walking distance highlight -->
+  <div class="card highlight">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0016 0c0-5-4-8-8-12z"/></svg>Walking + Running Distance<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Over the last 7 days, your distance walked and run averaged 3.9 km a day.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-data">
+      <div>
+        <div class="hl-big" style="font-size:28px">3.9<span class="hl-unit">km</span></div>
+        <div style="font-size:10px;color:var(--accent);margin-top:4px">Average Distance</div>
+      </div>
+      <div class="hl-bar-wrap">
+        <div class="week-bars" id="dist-week-bars"></div>
+        <div class="wbar-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Contributors -->
   <div class="section-title">Contributors</div>
   <div class="card">
@@ -421,7 +629,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     <div class="contrib-row"><span class="contrib-label">Recovery time</span><div class="contrib-bar-bg"><div class="contrib-bar" style="width:88%"></div></div><span class="contrib-val">88</span></div>
   </div>
 
-  <!-- Walking Equivalency -->
+  <!-- Movement Detail -->
   <div class="section-title">Movement Detail</div>
   <div class="card">
     <div class="stats-row">
@@ -429,6 +637,19 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
       <div class="stat-col"><div class="v">12</div><div class="l">Floors</div></div>
       <div class="stat-col"><div class="v">68%</div><div class="l">Goal</div></div>
     </div>
+  </div>
+
+  <!-- Activity article -->
+  <div class="insight">
+    <div class="insight-hero" style="background:linear-gradient(135deg,#1a1a0a,#2d2d15 40%,#3d3d1a)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(201,169,110,.1),transparent 55%)"></div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-cat"><svg viewBox="0 0 24 24"><path d="M12 2c-4 4-8 7-8 12a8 8 0 0016 0c0-5-4-8-8-12z"/></svg>Learn</div>
+      <div class="insight-h">What It Means If Your Cardio Fitness Is Low</div>
+      <div class="insight-p">And what you can do about it. Your VO2 max estimate reflects how efficiently your body uses oxygen during exercise.</div>
+    </div>
+    <div class="insight-arrow">&#8250;</div>
   </div>
 
   <div class="wordmark">orb</div>
@@ -447,11 +668,20 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     <div style="display:flex;justify-content:center"><div class="hr-pill"><div class="hr-dot"></div>Resting: 58 bpm</div></div>
   </div>
 
+  <!-- Heart insight -->
+  <div class="editorial">
+    <div class="ed-title">A healthy trend</div>
+    <div class="ed-text">Your resting heart rate has dropped 6 bpm since you started wearing Orb. This kind of gradual decline is typically associated with improved cardiovascular fitness.</div>
+    <button class="btn" style="margin-top:8px">View Trends</button>
+  </div>
+
   <!-- 24h Chart -->
   <div class="section-title">24-Hour Trend</div>
   <div class="card">
     <div class="chart-box"><canvas id="c-hr24"></canvas></div>
     <div class="chart-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>Now</span></div>
+    <div class="hl-sep"></div>
+    <div class="hl-h" style="font-size:12px">Your heart rate peaked at 124 bpm around 5:30pm during your evening activity. It recovered to resting within 8 minutes — a sign of good aerobic fitness.</div>
   </div>
 
   <!-- Daily Stats -->
@@ -479,11 +709,41 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
     </div>
   </div>
 
+  <!-- HRV highlight — storytelling -->
+  <div class="card highlight">
+    <div class="hl-cat"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>HRV Trend<span class="hl-arrow" style="margin-left:auto">&#8250;</span></div>
+    <div class="hl-h">Your average nighttime HRV has increased by 12% over the past 30 days. Higher HRV is linked to better stress resilience and autonomic balance.</div>
+    <div class="hl-sep"></div>
+    <div class="hl-compare">
+      <span class="hl-yr">This mo</span>
+      <div class="hl-yr-bar" style="width:72%;background:linear-gradient(90deg,#A8893E,var(--accent))"></div>
+      <span class="hl-yr-val">42ms</span>
+    </div>
+    <div class="hl-compare" style="margin-top:6px">
+      <span class="hl-yr">Last mo</span>
+      <div class="hl-yr-bar" style="width:58%;background:rgba(255,255,255,.1)"></div>
+      <span class="hl-yr-val" style="color:var(--t2)">37ms</span>
+    </div>
+  </div>
+
   <!-- Weekly Resting HR Trend -->
   <div class="section-title">Resting HR — 7 Day</div>
   <div class="card">
     <div class="chart-box"><canvas id="c-rhr7"></canvas></div>
     <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Today</span></div>
+  </div>
+
+  <!-- Heart article -->
+  <div class="insight">
+    <div class="insight-hero" style="background:linear-gradient(135deg,#1a0a1a,#2d152d 40%,#3d1a3d)">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 60% 30%,rgba(201,169,110,.1),transparent 50%)"></div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-cat"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Learn</div>
+      <div class="insight-h">Understanding Heart Rate Recovery</div>
+      <div class="insight-p">How quickly your heart rate returns to normal after exercise says a lot about your fitness level. Here's what to look for.</div>
+    </div>
+    <div class="insight-arrow">&#8250;</div>
   </div>
 
   <div class="wordmark">orb</div>
@@ -554,7 +814,6 @@ function heroSet(p,s,l,q,pct){document.querySelectorAll('.score-pill').forEach(x
 const now=new Date(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 document.getElementById('date-d').textContent=`${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
 
-// Chart helper
 function drawLine(id,data,yMin,yMax,color){
   const c=document.getElementById(id);if(!c)return;const ctx=c.getContext('2d'),dpr=devicePixelRatio||1,r=c.parentElement.getBoundingClientRect();
   c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';ctx.scale(dpr,dpr);
@@ -564,40 +823,31 @@ function drawLine(id,data,yMin,yMax,color){
   ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
   for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}
   ctx.lineTo(pts[pts.length-1].x,h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
-  // glow
   ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}ctx.strokeStyle='rgba(201,169,110,.25)';ctx.lineWidth=5;ctx.stroke();
-  // line
   ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y)}ctx.strokeStyle='#C9A96E';ctx.lineWidth=1.5;ctx.stroke();
-  // end dot
   const ep=pts[pts.length-1];ctx.beginPath();ctx.arc(ep.x,ep.y,5,0,Math.PI*2);ctx.fillStyle='rgba(201,169,110,.12)';ctx.fill();
   ctx.beginPath();ctx.arc(ep.x,ep.y,2.5,0,Math.PI*2);ctx.fillStyle='#C9A96E';ctx.fill();
 }
 
-// Hypnogram
 function drawHypno(id){
   const c=document.getElementById(id);if(!c)return;const ctx=c.getContext('2d'),dpr=devicePixelRatio||1,r=c.parentElement.getBoundingClientRect();
   c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';ctx.scale(dpr,dpr);
   const w=r.width,h=r.height;
-  // stages: 0=awake,1=rem,2=light,3=deep
   const stages=[0,2,2,1,2,3,3,2,1,2,2,3,3,3,2,1,1,2,2,0,2,2,1,2,3,2,2,1,0,2,2,1,2,2,0,0];
   const colors=['rgba(255,255,255,.15)','#C9A96E','rgba(201,169,110,.3)','#E8C46E'];
   const stageH=[h*.1,h*.35,h*.6,h*.9];
   const segW=w/stages.length;
   stages.forEach((s,i)=>{
-    ctx.fillStyle=colors[s];
-    const y=stageH[s]-8;const bh=h-y;
+    ctx.fillStyle=colors[s];const y=stageH[s]-8;const bh=h-y;
     ctx.fillRect(i*segW,y,segW-1,bh);
-    // highlight
     const hg=ctx.createLinearGradient(0,y,0,y+bh*.4);hg.addColorStop(0,'rgba(255,255,255,.1)');hg.addColorStop(1,'transparent');
     ctx.fillStyle=hg;ctx.fillRect(i*segW,y,segW-1,bh*.4);
   });
-  // labels
   ctx.fillStyle='rgba(255,255,255,.2)';ctx.font='500 8px DM Sans';ctx.textAlign='right';
   ['Awake','REM','Light','Deep'].forEach((l,i)=>{ctx.fillText(l,w-4,stageH[i]-2)});
 }
 
-// Bar charts
-function drawBars(id,data,active){
+function drawBars(id,data){
   const el=document.getElementById(id);if(!el)return;el.innerHTML='';
   const mx=Math.max(...data);
   data.forEach(v=>{
@@ -609,7 +859,18 @@ function drawBars(id,data,active){
   });
 }
 
-// Data
+function drawWeekBars(id,data){
+  const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+  const mx=Math.max(...data);
+  data.forEach(v=>{
+    const b=document.createElement('div');b.className='wbar';
+    const pct=mx>0?(v/mx)*100:0;b.style.height=Math.max(pct,5)+'%';
+    b.style.background=v>mx*.5?'linear-gradient(to top,#A8893E,var(--accent))':'rgba(201,169,110,.2)';
+    if(v>mx*.5)b.style.boxShadow='0 0 4px rgba(201,169,110,.1)';
+    el.appendChild(b);
+  });
+}
+
 const sleepHR=[68,65,62,60,58,55,53,52,52,53,54,52,51,52,54,56,58,60,62,64,65];
 const sleepHRV=[35,38,42,45,48,52,55,58,60,55,50,58,62,65,60,52,48,42,38,35,32];
 const dayHR=[58,56,54,52,53,55,62,68,72,78,85,92,88,76,72,80,95,124,110,88,75,68,65,62];
@@ -617,6 +878,9 @@ const dayHRV=[45,48,52,55,50,42,35,28,25,22,24,26,28,30,32,28,22,18,20,28,35,40,
 const rhr7=[61,60,60,59,59,58,58];
 const hourlyAct=[0,0,0,0,0,0,10,25,40,15,8,5,30,45,20,10,5,60,80,35,15,8,0,0];
 const sleepMove=[2,1,0,1,3,1,0,0,1,2,0,0,1,0,0,0,1,2,1,0,1,3,2,1,0,0,1,0,1,2,3,1,0,0,1,2];
+const stepWeek=[7200,9100,8800,6500,10200,9400,8450];
+const sleepWeek=[68,78,82,65,90,85,75];
+const distWeek=[28,42,35,25,55,48,38];
 
 function drawAll(){
   drawLine('c-shr',sleepHR,45,75);
@@ -627,11 +891,13 @@ function drawAll(){
   drawHypno('c-hypno');
   drawBars('act-bars',hourlyAct);
   drawBars('sleep-movement',sleepMove);
+  drawWeekBars('step-week-bars',stepWeek);
+  drawWeekBars('sleep-week-bars',sleepWeek);
+  drawWeekBars('dist-week-bars',distWeek);
 }
 setTimeout(drawAll,120);
 window.addEventListener('resize',drawAll);
 
-// Date tab clicks
 document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',function(){this.parentElement.querySelectorAll('.date-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
 </script>
 </body>
