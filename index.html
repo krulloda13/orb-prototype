@@ -755,90 +755,106 @@ html, body {
 
     <!-- ===== HOME ===== -->
     <div class="screen active" id="screen-home">
-      <div class="greeting">Good morning,<br>Kris</div>
-      <div class="date-sub" id="date-display"></div>
 
-      <!-- Readiness Score Card -->
-      <div class="score-card" onclick="switchTab(0)" style="margin-top:24px;">
-        <div class="score-card-ring">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle class="ring-bg-glow" cx="36" cy="36" r="34"/>
-            <circle class="ring-track" cx="36" cy="36" r="30" stroke-width="5"/>
-            <circle class="ring-progress" cx="36" cy="36" r="30" stroke-width="5"
-              stroke-dasharray="154 189" transform="rotate(-90 36 36)"/>
-          </svg>
-          <span class="mini-score">82</span>
-        </div>
-        <div class="score-card-info">
-          <div class="score-card-title">Readiness</div>
-          <div class="score-card-status">You're well recovered</div>
-          <div class="score-card-detail">HRV and resting HR are optimal</div>
-        </div>
-        <div class="score-card-arrow">&#8250;</div>
-      </div>
-
-      <!-- Sleep Score Card -->
-      <div class="score-card" onclick="switchTab(1)">
-        <div class="score-card-ring">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle class="ring-bg-glow" cx="36" cy="36" r="34"/>
-            <circle class="ring-track" cx="36" cy="36" r="30" stroke-width="5"/>
-            <circle class="ring-progress" cx="36" cy="36" r="30" stroke-width="5"
-              stroke-dasharray="160 189" transform="rotate(-90 36 36)"/>
-          </svg>
-          <span class="mini-score">85</span>
-        </div>
-        <div class="score-card-info">
-          <div class="score-card-title">Sleep</div>
-          <div class="score-card-status">7h 24m total sleep</div>
-          <div class="score-card-detail">1h 31m deep · 1h 48m REM</div>
-        </div>
-        <div class="score-card-arrow">&#8250;</div>
-      </div>
-
-      <!-- Activity Score Card -->
-      <div class="score-card" onclick="switchTab(2)">
-        <div class="score-card-ring">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle class="ring-bg-glow" cx="36" cy="36" r="34"/>
-            <circle class="ring-track" cx="36" cy="36" r="30" stroke-width="5"/>
-            <circle class="ring-progress" cx="36" cy="36" r="30" stroke-width="5"
-              stroke-dasharray="159 189" transform="rotate(-90 36 36)"/>
-          </svg>
-          <span class="mini-score">84</span>
-        </div>
-        <div class="score-card-info">
-          <div class="score-card-title">Activity</div>
-          <div class="score-card-status">420 / 500 kcal goal</div>
-          <div class="score-card-detail">8,240 steps · 42 min active</div>
-        </div>
-        <div class="score-card-arrow">&#8250;</div>
-      </div>
-
-      <!-- Quick Stats -->
-      <div class="quick-stats">
-        <div class="quick-stat" onclick="switchTab(3)">
-          <div class="quick-stat-val">62</div>
-          <div class="quick-stat-lbl">BPM</div>
-        </div>
-        <div class="quick-stat">
-          <div class="quick-stat-val">8,240</div>
-          <div class="quick-stat-lbl">Steps</div>
-        </div>
-        <div class="quick-stat">
-          <div class="quick-stat-val">94%</div>
-          <div class="quick-stat-lbl">Sleep Eff.</div>
+      <!-- Top bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div class="greeting" style="font-size:20px;">orb</div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="date-sub" id="date-display" style="margin:0;"></div>
         </div>
       </div>
 
-      <!-- Daily Insight -->
-      <div class="insight-card">
-        <span class="insight-icon">&#10024;</span>
-        <div class="insight-title">Daily Insight</div>
-        <div class="insight-text">Your resting heart rate dropped 3 bpm this week. Combined with strong deep sleep, your body is recovering well. A great day for higher intensity training.</div>
+      <!-- Horizontal Score Pills -->
+      <div class="score-pills">
+        <div class="score-pill active" onclick="setHeroScore(this, 82, 'Readiness', 'Good', 0.82)">
+          <div class="pill-ring-wrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
+              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
+                stroke-dasharray="113 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+            </svg>
+            <span class="pill-score">82</span>
+          </div>
+          <span class="score-pill-label">Readiness</span>
+        </div>
+        <div class="score-pill" onclick="setHeroScore(this, 85, 'Sleep', 'Optimal', 0.85)">
+          <div class="pill-ring-wrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
+              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
+                stroke-dasharray="117 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+            </svg>
+            <span class="pill-score">85</span>
+          </div>
+          <span class="score-pill-label">Sleep</span>
+        </div>
+        <div class="score-pill" onclick="setHeroScore(this, 84, 'Activity', 'On track', 0.84)">
+          <div class="pill-ring-wrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
+              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
+                stroke-dasharray="116 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+            </svg>
+            <span class="pill-score">84</span>
+          </div>
+          <span class="score-pill-label">Activity</span>
+        </div>
+        <div class="score-pill" onclick="setHeroScore(this, 62, 'Heart Rate', '62 bpm', 0.52)">
+          <div class="pill-ring-wrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
+              <circle cx="26" cy="26" r="22" fill="none" stroke="url(#goldGradient)" stroke-width="3"
+                stroke-dasharray="72 138" stroke-linecap="round" transform="rotate(-90 26 26)"/>
+            </svg>
+            <span class="pill-score">62</span>
+          </div>
+          <span class="score-pill-label">Heart</span>
+        </div>
       </div>
 
-      <div class="wordmark">orb</div>
+      <!-- Hero Arc Section -->
+      <div class="hero-section">
+        <div class="hero-arc">
+          <div class="arc-wrap">
+            <svg width="220" height="130" viewBox="0 0 220 130">
+              <!-- Track arc -->
+              <path d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6" stroke-linecap="round"/>
+              <!-- Scale ticks -->
+              <path d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="10" stroke-linecap="butt"
+                stroke-dasharray="1 8"/>
+              <!-- Progress arc -->
+              <path id="hero-arc-progress" d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="url(#goldGradient)" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="232 283" style="filter:drop-shadow(0 0 8px rgba(201,169,110,0.35))"/>
+              <!-- End glow dot -->
+              <circle id="hero-arc-dot" cx="195" cy="38" r="4" fill="#C9A96E" style="filter:drop-shadow(0 0 6px rgba(201,169,110,0.5))"/>
+            </svg>
+            <div class="arc-center">
+              <span class="arc-score" id="hero-score">82</span>
+              <span class="arc-quality" id="hero-quality">Good</span>
+            </div>
+          </div>
+          <div class="hero-label" id="hero-label">Readiness</div>
+        </div>
+      </div>
+
+      <!-- Editorial Content -->
+      <div class="editorial-block">
+        <div class="editorial-title">Sleep and recovery</div>
+        <div class="editorial-text">Your Sleep contributor shows that last night's sleep quality was excellent and supported your recovery. Your resting heart rate dropped 3 bpm this week — a sign your body is adapting well.</div>
+        <button class="learn-more-btn" onclick="switchTab(1)">Learn more</button>
+      </div>
+
+      <!-- Spotlight Card -->
+      <div class="spotlight-card" onclick="switchTab(2)">
+        <div class="spotlight-bg"></div>
+        <div class="spotlight-content">
+          <div class="spotlight-label">Activity goal</div>
+          <div class="spotlight-title">420 / 500 kcal — 8,240 steps today</div>
+        </div>
+        <div class="spotlight-arrow">&#8250;</div>
+      </div>
+
+      <div class="wordmark" style="margin-top:24px;">orb</div>
     </div>
 
     <!-- ===== SLEEP ===== -->
