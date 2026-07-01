@@ -922,6 +922,116 @@ function drawAll(){
 setTimeout(drawAll,120);
 window.addEventListener('resize',drawAll);
 
+/* === ANIMATIONS === */
+
+// Scroll-triggered card reveals
+const animObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      e.target.style.animationDelay=(e.target.dataset.delay||0)+'s';
+      e.target.classList.add('anim');
+      animObs.unobserve(e.target);
+    }
+  });
+},{threshold:.15});
+document.querySelectorAll('.card,.insight').forEach((el,i)=>{
+  el.dataset.delay=(.06*i).toFixed(2);
+  el.style.opacity='0';
+  animObs.observe(el);
+});
+
+// Hero arc draw-in animation
+function animateArc(arcEl,targetDash){
+  arcEl.style.transition='none';
+  arcEl.setAttribute('stroke-dasharray','0 267');
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      arcEl.style.transition='stroke-dasharray 1.2s cubic-bezier(.23,1,.32,1)';
+      arcEl.setAttribute('stroke-dasharray',targetDash+' 267');
+    });
+  });
+}
+
+// Score pill ring draw-in
+function animateRings(){
+  document.querySelectorAll('.pill-wrap svg .ring-prog').forEach(ring=>{
+    const da=ring.getAttribute('stroke-dasharray');
+    const target=parseFloat(da);
+    ring.style.transition='none';
+    ring.setAttribute('stroke-dasharray','0 126');
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        ring.style.transition='stroke-dasharray .9s cubic-bezier(.23,1,.32,1)';
+        ring.setAttribute('stroke-dasharray',target+' 126');
+      });
+    });
+  });
+}
+
+// Contributor bar grow-in
+function animateContribBars(){
+  document.querySelectorAll('.screen.active .contrib-bar').forEach((bar,i)=>{
+    const w=bar.style.width;
+    bar.style.width='0';
+    setTimeout(()=>{bar.style.width=w},100+i*60);
+  });
+}
+
+// Number count-up
+function countUp(el,target,duration,suffix){
+  const start=0;const startTime=performance.now();
+  suffix=suffix||'';
+  function tick(now){
+    const p=Math.min((now-startTime)/duration,1);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(start+eased*(target-start))+suffix;
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// Run entrance animations on page load
+function runEntranceAnimations(){
+  const heroArc=document.getElementById('h-arc');
+  if(heroArc)animateArc(heroArc,219);
+  animateRings();
+  setTimeout(animateContribBars,400);
+}
+
+// Re-run animations on tab switch
+const origSwitchTab=switchTab;
+switchTab=function(i){
+  origSwitchTab(i);
+  // Animate cards in the new screen
+  SS[i].querySelectorAll('.card,.insight').forEach((el,j)=>{
+    el.style.opacity='0';
+    el.classList.remove('anim');
+    el.dataset.delay=(.06*j).toFixed(2);
+    animObs.observe(el);
+  });
+  // Animate contrib bars in the new screen
+  setTimeout(()=>{
+    SS[i].querySelectorAll('.contrib-bar').forEach((bar,j)=>{
+      const w=bar.style.width;
+      bar.style.width='0';
+      setTimeout(()=>{bar.style.width=w},80+j*60);
+    });
+  },300);
+  // Animate arcs in sleep/activity screens
+  SS[i].querySelectorAll('[stroke-dasharray]').forEach(path=>{
+    const parent=path.closest('.arc-w');
+    if(parent){
+      const da=path.getAttribute('stroke-dasharray');
+      const target=parseFloat(da);
+      if(target>0&&da.includes('267')){
+        animateArc(path,target);
+      }
+    }
+  });
+};
+
+setTimeout(runEntranceAnimations,200);
+
 document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',function(){this.parentElement.querySelectorAll('.date-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
 </script>
 </body>
