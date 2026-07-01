@@ -230,13 +230,12 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 7px rgba(201,169,110,.3))}50%{filter:drop-shadow(0 0 14px rgba(201,169,110,.5))}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes breathe{0%,100%{box-shadow:0 0 0 1.5px var(--accent),0 0 12px rgba(201,169,110,.15)}50%{box-shadow:0 0 0 1.5px var(--accent),0 0 20px rgba(201,169,110,.3)}}
-@keyframes sparkle{0%{opacity:0;transform:translate(-50%,-50%) scale(0)}30%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0)}}
-@keyframes sparkleRotate{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(180deg)}}
-.sparkle{position:absolute;pointer-events:none;z-index:3}
-.sparkle::before,.sparkle::after{content:'';position:absolute;background:linear-gradient(90deg,transparent,#E8D4A0,transparent);border-radius:1px}
-.sparkle::before{width:100%;height:1.5px;top:50%;left:0;transform:translateY(-50%);box-shadow:0 0 6px rgba(232,212,160,.9),0 0 12px rgba(201,169,110,.5)}
-.sparkle::after{width:1.5px;height:100%;left:50%;top:0;transform:translateX(-50%);box-shadow:0 0 6px rgba(232,212,160,.9),0 0 12px rgba(201,169,110,.5)}
-.sparkle-dot{position:absolute;border-radius:50%;background:radial-gradient(circle,#fff,#E8D4A0);pointer-events:none;z-index:3;box-shadow:0 0 4px rgba(255,255,255,.8),0 0 8px rgba(201,169,110,.6),0 0 16px rgba(201,169,110,.3)}
+@keyframes twinkle{0%,100%{opacity:.1;transform:scale(.3)}50%{opacity:1;transform:scale(1)}}
+.twinkle{position:absolute;pointer-events:none;z-index:3}
+.twinkle::before,.twinkle::after{content:'';position:absolute;background:linear-gradient(90deg,transparent 10%,#E8D4A0 40%,#fff 50%,#E8D4A0 60%,transparent 90%);border-radius:1px}
+.twinkle::before{width:100%;height:1.5px;top:50%;left:0;transform:translateY(-50%);box-shadow:0 0 4px rgba(232,212,160,.8),0 0 10px rgba(201,169,110,.4)}
+.twinkle::after{width:1.5px;height:100%;left:50%;top:0;transform:translateX(-50%);box-shadow:0 0 4px rgba(232,212,160,.8),0 0 10px rgba(201,169,110,.4)}
+.twinkle-dot{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.9),rgba(232,212,160,.6));pointer-events:none;z-index:3;box-shadow:0 0 3px rgba(255,255,255,.7),0 0 6px rgba(201,169,110,.5),0 0 12px rgba(201,169,110,.2)}
 
 .score-pill.active .pill-wrap{animation:breathe 3s ease-in-out infinite}
 .hero-arc{animation:fadeIn .6s ease-out both}
