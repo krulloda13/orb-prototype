@@ -1127,25 +1127,26 @@ document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',fun
     });
   },1400);
 
-  // Step 3: Fly logo off screen left while home fades in
+  // Step 3: Fly logo off screen left (splash bg still dark so you see it move)
   setTimeout(()=>{
-    // Hide loading bar and glow
     bar.parentElement.style.opacity='0';
     splash.querySelector('.splash-glow').style.opacity='0';
-    // Clear splash background so app shows through
-    splash.classList.add('bg-clear');
-    // Show app underneath
-    app.classList.remove('hidden');
-    app.style.opacity='1';
-    // Fly logo off to the left
     logo.classList.add('fly-left');
   },2400);
 
-  // Step 4: After fly completes, remove splash and run animations
+  // Step 4: After logo has flown, fade splash out and reveal app
+  setTimeout(()=>{
+    app.classList.remove('hidden');
+    app.style.opacity='1';
+    splash.style.transition='opacity .4s ease';
+    splash.style.opacity='0';
+  },2900);
+
+  // Step 5: Remove splash and run entrance animations
   setTimeout(()=>{
     splash.remove();
     runEntranceAnimations();
-  },3100);
+  },3400);
 })();
 </script>
 </body>
