@@ -23,15 +23,16 @@
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 
 /* SPLASH SCREEN */
-.splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .5s ease}
-.splash.fade-out{opacity:0;pointer-events:none}
-.splash-logo{display:flex;gap:2px;font-weight:300;font-size:48px;letter-spacing:6px;color:var(--t2);position:relative;transition:transform .6s cubic-bezier(.23,1,.32,1),left .6s cubic-bezier(.23,1,.32,1)}
+.splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.splash.bg-clear{background:transparent}
+.splash-logo{display:flex;gap:2px;font-weight:300;font-size:48px;letter-spacing:6px;color:var(--t2);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:all .8s cubic-bezier(.23,1,.32,1)}
+.splash-logo.pan{font-size:18px;letter-spacing:3px;left:calc(50% - 195px + 20px);top:32px;transform:translate(0,-50%)}
 .splash-letter{display:inline-block;opacity:0;transform:translateY(-60px);transition:opacity .4s ease,transform .4s cubic-bezier(.34,1.56,.64,1)}
 .splash-letter.drop{opacity:1;transform:translateY(0)}
-.splash-bar{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:2px;background:rgba(255,255,255,.06);border-radius:1px;overflow:hidden}
+.splash-bar{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:2px;background:rgba(255,255,255,.06);border-radius:1px;overflow:hidden;transition:opacity .3s}
 .splash-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#A8893E,#C9A96E,#E8D4A0);border-radius:1px;transition:width 1.2s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(201,169,110,.3)}
 .splash-bar-fill.loading{width:100%}
-.splash-glow{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.08),transparent 70%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);animation:splashPulse 2s ease-in-out infinite}
+.splash-glow{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.08),transparent 70%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);animation:splashPulse 2s ease-in-out infinite;transition:opacity .3s}
 @keyframes splashPulse{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(.8)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}}
 
 .app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg)}
