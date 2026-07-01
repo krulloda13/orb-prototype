@@ -1107,6 +1107,57 @@ switchTab=function(i){
 setTimeout(initTwinkles,600);
 
 document.querySelectorAll('.date-tab').forEach(t=>t.addEventListener('click',function(){this.parentElement.querySelectorAll('.date-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
+
+// Splash screen animation
+(function(){
+  const splash=document.getElementById('splash');
+  const logo=document.getElementById('splash-logo');
+  const bar=document.getElementById('splash-bar-fill');
+  const letters=splash.querySelectorAll('.splash-letter');
+  const app=document.getElementById('app');
+
+  // Step 1: Start loading bar
+  setTimeout(()=>bar.classList.add('loading'),100);
+
+  // Step 2: After loading completes, drop letters one by one
+  setTimeout(()=>{
+    letters.forEach((l,i)=>{
+      setTimeout(()=>l.classList.add('drop'),i*200);
+    });
+  },1400);
+
+  // Step 3: After letters drop, pan logo to the left (into top-bar position)
+  setTimeout(()=>{
+    // Hide the loading bar
+    bar.parentElement.style.opacity='0';
+    bar.parentElement.style.transition='opacity .3s';
+    // Shrink and move logo to top-left
+    logo.style.fontSize='18px';
+    logo.style.letterSpacing='3px';
+    logo.style.position='fixed';
+    logo.style.left='20px';
+    logo.style.top='16px';
+    logo.style.transform='none';
+    splash.style.background='transparent';
+    // Hide glow
+    splash.querySelector('.splash-glow').style.opacity='0';
+    splash.querySelector('.splash-glow').style.transition='opacity .3s';
+  },2400);
+
+  // Step 4: Reveal the app and fade out splash
+  setTimeout(()=>{
+    app.classList.remove('hidden');
+    app.style.opacity='0';
+    app.style.transition='opacity .4s ease';
+    requestAnimationFrame(()=>{app.style.opacity='1'});
+    splash.classList.add('fade-out');
+    // Run entrance animations
+    setTimeout(runEntranceAnimations,200);
+  },2900);
+
+  // Step 5: Remove splash from DOM
+  setTimeout(()=>splash.remove(),3500);
+})();
 </script>
 </body>
 </html>
